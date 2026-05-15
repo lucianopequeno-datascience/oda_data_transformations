@@ -1,0 +1,5 @@
+defaultProject: refreshing-park-469314-t6
+defaultLocation: southamerica-east1
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.52
