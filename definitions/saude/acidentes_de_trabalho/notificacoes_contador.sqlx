@@ -1,0 +1,11 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "notificacoes_acidentes_de_trabalho_v",
+  description: "Conta notificações por acidentes de trabalho na série histórica",
+  }
+
+SELECT 
+   COUNT(DT_NOTIFIC)
+FROM 
+   ${ref("acidentes_de_trabalho_silver")}
