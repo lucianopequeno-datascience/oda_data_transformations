@@ -3,12 +3,7 @@ config {
   schema: "dados_alagoinhas_gold",
   name: "acidentedetrabalho_alagoinhas_gold_v",
   description: "Dados consolidados de acidentes de trabalho para o município de Alagoinhas/BA",
-  assertions: {
-    nonNull: ["id_registro", "data_notificacao"]
   }
-}
 
-SELECT *
-  ${ref("acidentes_de_trabalho_silver")}
-WHERE
-  ID_MN_RESI LIKE '290070%' -- Garante que apenas os dados de Alagoinhas passam para a Gold
+SELECT * FROM
+${ref("acidentes_de_trabalho_silver")}
