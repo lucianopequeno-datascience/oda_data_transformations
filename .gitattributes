@@ -1,4 +1,2 @@
-.sqlx linguist-language=SQL
-.yaml linguist-language=YAML
-.yml linguist-language=YAML
-.js linguist-language=JavaScript
+*.sqlx linguist-generated=false
+*.sqlx linguist-language=SQL
