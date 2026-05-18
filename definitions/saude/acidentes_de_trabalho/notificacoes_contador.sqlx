@@ -1,11 +1,14 @@
 config {
   type: "view",
   schema: "dados_alagoinhas_gold",
-  name: "notificacoes_acidentes_de_trabalho_v",
-  description: "Conta notificações por acidentes de trabalho na série histórica",
-  }
+  name: "contador",
+  description: "Contagem de notificações de acidentes de trabalho por data"
+}
 
-SELECT 
-   COUNT(DT_NOTIFIC) AS total_notificacoes
-FROM 
-   ${ref("acidentes_de_trabalho_silver")}
+SELECT
+  DT_NOTIFIC AS data_notificacao,
+  COUNT(DT_NOTIFIC) AS total_notificacoes
+FROM
+  ${ref("acidentes_de_trabalho_silver")}
+GROUP BY
+  1

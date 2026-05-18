@@ -3,7 +3,32 @@ config {
   schema: "dados_alagoinhas_gold",
   name: "acidentedetrabalho_alagoinhas_gold_v",
   description: "Dados consolidados de acidentes de trabalho para o município de Alagoinhas/BA",
-  }
+}
 
-SELECT * FROM
-${ref("acidentes_de_trabalho_silver")}
+SELECT 
+  TP_NOT AS tipo_notificacao,
+  ID_AGRAVO AS id_agravo,
+  DT_NOTIFIC AS data_notificacao,
+  SEM_NOT AS semana_notificacao,
+  NU_ANO AS ano,
+  SG_UF_NOT AS uf_notificacao,
+  ID_MUNICIP AS id_municipio,
+  ID_REGIONA AS id_regiao,
+  ID_UNIDADE AS unidade_notificadora,
+  DT_ACID AS data_acidente,
+  SEM_ACID AS semana_acidente,
+  ANO_NASC AS ano_nasc,
+  CASE 
+    -- Se estiver na casa dos 4000 (Anos), subtrai 4000 para isolar a idade
+    WHEN NU_IDADE_N >= 4000 AND NU_IDADE_N < 5000 THEN NU_IDADE_N - 4000
+    -- Se for menor que 4000 (Horas, Dias ou Meses), a idade em anos completos é 0
+    WHEN NU_IDADE_N < 4000 THEN 0
+    ELSE NULL 
+  END AS idade_em_anos,
+  CASE
+    WHEN CS_SEXO = 'F' THEN 'Feminino'
+    WHEN CS_SEXO = 'M' THEN 'Masculino'
+    WHEN CS_SEXO = 'I' THEN 'Ignorado'
+  END AS sexo
+FROM
+  ${ref("acidentes_de_trabalho_silver")}
