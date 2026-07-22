@@ -29,6 +29,14 @@ SELECT
     WHEN CS_SEXO = 'F' THEN 'Feminino'
     WHEN CS_SEXO = 'M' THEN 'Masculino'
     WHEN CS_SEXO = 'I' THEN 'Ignorado'
-  END AS sexo
+  END AS sexo,
+  CS_GESTANT AS gestacao,
+  CASE 
+   WHEN CS_RACA = 1 THEN 'Branca'
+   WHEN CS_RACA = 2 THEN 'Preta'
+   WHEN CS_RACA = 3 THEN 'Amarela'
+   WHEN CS_RACA = 4 THEN 'Parda'
+   WHEN CS_RACA = 9 THEN 'Ignorado'
+   END AS raca
 FROM
   ${ref("acidentes_de_trabalho_silver")}
