@@ -1,0 +1,9 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "zika_alagoinhas_df_2026_gold",
+  description: "Mantém a base de dados da Zika com padronização",
+}
+
+SELECT * 
+FROM  ${ref("zika_alagoinhas_silver")}
