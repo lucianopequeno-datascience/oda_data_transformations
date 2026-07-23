@@ -4,5 +4,6 @@ config {
   name: "mortalidade_alagoinhas_gold",
   description: "Mantém a base de dados sobre mortalidade em Alagoinhas",
 }
+
 SELECT * 
 FROM  ${ref("mortalidade_alagoinhas_gold")}
