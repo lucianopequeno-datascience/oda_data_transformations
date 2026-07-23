@@ -1,6 +1,6 @@
 config {
-  type: "declaration",
-  database: "refreshing-park-469314-t6",
-  schema: "dados_alagoinhas_silver",
-  name: "acidentes_de_trabalho_silver"
+    type: "declaration",
+    database: "refreshing-park-469314-t6",
+    schema: "dados_alagoinhas_silver",
+    name: "acidentes_de_trabalho_silver"
 }
