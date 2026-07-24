@@ -7,7 +7,7 @@ config {
 
 SELECT 
   TIPOBITO AS tipo_obito,
-  DTOBITO AS data_obito,
+  PARSE_DATE('%d/%m/%Y', DTOBITO) AS data_obito,
   HORAOBITO AS hora_obito,
   `NATURAL` AS naturalidade,
   IDADE AS idade,
