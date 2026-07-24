@@ -5,5 +5,14 @@ config {
   description: "Mantém a base de dados sobre mortalidade em Alagoinhas",
 }
 
-SELECT * 
+SELECT 
+TIPOBITO AS tipo_obito,
+DTOBITO AS data_obito,
+HORAOBITO AS hora_obito,
+NATURAL AS natural,
+IDADE AS idade,
+SEXO AS sexo,
+RACACOR AS raca,
+ESTCIV AS estado_civil,
+ESC AS escolaridade,
 FROM  ${ref("mortalidade_alagoinhas_gold")}
