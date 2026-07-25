@@ -1,0 +1,17 @@
+config {
+  type: "view", 
+  schema: "dados_alagoinhas_gold",
+  description: "Visão consolidada de anomalias cruzada com o dicionário CID-10"
+}
+
+SELECT 
+  n.*,  
+  c.*   
+
+FROM 
+  ${ref("natalidade_alagoinhas_silver")} AS n
+
+LEFT JOIN 
+  ${ref("cid10")} AS c 
+ON 
+  n.codigo_anomalia = CAST(c.subcategoria AS STRING)

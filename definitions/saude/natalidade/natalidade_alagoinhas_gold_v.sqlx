@@ -5,5 +5,40 @@ config {
     description: "Informações sobre natalidade em Alagoinhas durante série temporal especificada"
 }
 
-SELECT * 
+SELECT 
+  ano,
+  sequencial_nascimento,
+  codigo_estabelecimento,  
+
+--tratando sexo
+  CASE 
+    WHEN UPPER(CAST(sexo AS STRING)) IN ('1', 'M') THEN 'Masculino'
+    WHEN UPPER(CAST(sexo AS STRING)) IN ('2', 'F') THEN 'Feminino'
+    WHEN CAST(sexo AS STRING) = '0' THEN 'Ignorado'
+    ELSE 'Ignorado'
+  END AS sexo,
+
+--tratando raça cor
+  CASE 
+    WHEN CAST(raca_cor AS STRING) = '1' THEN 'Branca'
+    WHEN CAST(raca_cor AS STRING) = '2' THEN 'Preta'
+    WHEN CAST(raca_cor AS STRING) = '3' THEN 'Amarela'
+    WHEN CAST(raca_cor AS STRING) = '4' THEN 'Parda'
+    WHEN CAST(raca_cor AS STRING) = '5' THEN 'Indígena'
+    WHEN CAST(raca_cor AS STRING) = '9' THEN 'Não Informado' 
+    ELSE 'Não Informado' 
+  END AS raca_cor,
+
+--tratanto anomalia
+  CASE 
+    WHEN CAST(id_anomalia AS STRING) = '1' THEN 'Sim'
+    WHEN CAST(id_anomalia AS STRING) = '2' THEN 'Não'
+    WHEN CAST(id_anomalia AS STRING) = '9' THEN 'Não Informado'
+    ELSE 'Não Informado' 
+  END AS id_anomalia
+
+-- comentário
+
+
+
 FROM  ${ref("natalidade_alagoinhas_silver")}
