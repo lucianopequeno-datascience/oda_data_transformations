@@ -1,0 +1,9 @@
+config {
+    type: "view",
+    schema: "dados_alagoinhas_gold",
+    name: "natalidade_alagoinhas_gold_v",
+    description: "Informações sobre natalidade em Alagoinhas durante série temporal especificada"
+}
+
+SELECT * 
+FROM  ${ref("natalidade_alagoinhas_silver")}
