@@ -1,0 +1,6 @@
+config {
+    type:"declaration",
+    schema:"dados_alagoinhas_silver",
+    name: "violencia_alagoinhas_silver",
+    description: "Tratamento de dados do SINAN para Alagoinhas sobre violência interpessoal ou autoprovocada"
+}

@@ -1,0 +1,9 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"violencia_alagoinhas_gold_v",
+    description: "Tratamento de dados sobre violência interpessoal ou autoprovocada"
+}
+
+SELECT * FROM
+ ${ref("violencia_alagoinhas_silver")}
