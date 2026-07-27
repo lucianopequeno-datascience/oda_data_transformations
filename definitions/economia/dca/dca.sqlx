@@ -1,0 +1,11 @@
+config {
+    type:"view",
+    schema: "dados_alagoinhas_gold",
+    name:"dca_alagoinhas_gold_v",
+    description: "Tratamento de dados sobre declaração de contas anuais em Alagoinhas "
+}
+
+SELECT * FROM
+ ${ref("financas_dca_alagoinhas_silver")}
+
+ 
