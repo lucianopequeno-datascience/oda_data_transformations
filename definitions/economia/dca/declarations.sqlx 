@@ -1,0 +1,6 @@
+config {
+  type: "declaration",
+  schema: "dados_alagoinhas_silver", 
+  name: "financas_dca_alagoinhas_silver",
+  description: "Dados sobre declaração de contas anuais do SICONFI"
+}
