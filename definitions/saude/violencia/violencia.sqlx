@@ -5,5 +5,58 @@ config {
     description: "Tratamento de dados sobre violência interpessoal ou autoprovocada"
 }
 
-SELECT * FROM
+SELECT 
+    DT_NOTIFIC AS data_notificacao,
+    NU_ANO AS ano,
+
+ -- transformação sexo   
+CASE 
+    WHEN CS_SEXO = "F" THEN "Feminino"
+    WHEN CS_SEXO = "M" THEN "Masculino"
+    WHEN CS_SEXO = "I" THEN "Ignorado"
+    WHEN CS_SEXO IS NULL THEN "Não especificado"
+END AS sexo,
+
+-- transformação situação gestacional
+CASE
+    WHEN CS_GESTANT = 1 THEN '1º trimestre'
+    WHEN CS_GESTANT = 2 THEN '2º trimestre'
+    WHEN CS_GESTANT = 3 THEN '3º trimestre'
+    WHEN CS_GESTANT = 4 THEN 'Idade gestacional ignorada'
+    WHEN CS_GESTANT = 5 THEN 'Não'
+    WHEN CS_GESTANT = 6 THEN 'Não se aplica'
+    WHEN CS_GESTANT = 9 THEN 'Ignorado'
+    ELSE 'Não preenchido'
+  END AS situacao_gestacional,
+
+-- transformação raça cor
+CASE
+    WHEN CS_RACA = 1 THEN 'Branca'
+    WHEN CS_RACA = 2 THEN 'Preta'
+    WHEN CS_RACA = 3 THEN 'Amarela'
+    WHEN CS_RACA = 4 THEN 'Parda'
+    WHEN CS_RACA = 5 THEN 'Indígena'
+    WHEN CS_RACA = 9 THEN 'Ignorado'
+    ELSE 'Não preenchido' 
+  END AS raca_cor,
+
+-- transformação escolaridade
+CASE
+    WHEN CS_ESCOL_N = 0 THEN 'Analfabeto'
+    WHEN CS_ESCOL_N = 1 THEN '1ª a 4ª série incompleta do EF'
+    WHEN CS_ESCOL_N = 2 THEN '4ª série completa do EF'
+    WHEN CS_ESCOL_N = 3 THEN '5ª à 8ª série incompleta do EF'
+    WHEN CS_ESCOL_N = 4 THEN 'Ensino fundamental completo'
+    WHEN CS_ESCOL_N = 5 THEN 'Ensino médio incompleto'
+    WHEN CS_ESCOL_N = 6 THEN 'Ensino médio completo'
+    WHEN CS_ESCOL_N = 7 THEN 'Educação superior incompleta'
+    WHEN CS_ESCOL_N = 8 THEN 'Educação superior completa'
+    WHEN CS_ESCOL_N = 9 THEN 'Ignorado'
+    WHEN CS_ESCOL_N = 10 THEN 'Não se aplica'
+    WHEN CS_ESCOL_N IS NULL THEN 'Não preenchido'
+    ELSE 'Outro/Não informado' 
+  END AS escolaridade
+
+
+FROM
  ${ref("violencia_alagoinhas_silver")}
