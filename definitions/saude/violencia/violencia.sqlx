@@ -55,8 +55,21 @@ CASE
     WHEN CS_ESCOL_N = 10 THEN 'Não se aplica'
     WHEN CS_ESCOL_N IS NULL THEN 'Não preenchido'
     ELSE 'Outro/Não informado' 
-  END AS escolaridade
+  END AS escolaridade,
 
+-- transformação situação conjugal
+  CASE
+    WHEN SIT_CONJUG = 1 THEN 'Solteiro(a)'
+    WHEN SIT_CONJUG = 2 THEN 'Casado(a)/União consensual'
+    WHEN SIT_CONJUG = 3 THEN 'Viúvo(a)'
+    WHEN SIT_CONJUG = 4 THEN 'Divorciado(a)'
+    WHEN SIT_CONJUG = 8 THEN 'Não se aplica'
+    WHEN SIT_CONJUG = 9 THEN 'Ignorado'
+    WHEN SIT_CONJUG IS NULL THEN 'Não preenchido'
+    ELSE 'Outro/Fora do padrão' 
+  END AS situacao_conjugal
+
+-- 
 
 FROM
  ${ref("violencia_alagoinhas_silver")}
