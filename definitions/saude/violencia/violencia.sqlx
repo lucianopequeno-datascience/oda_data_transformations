@@ -135,14 +135,19 @@ CASE
 -- transformação idade anos
 
 CASE 
-    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) = '5' THEN CAST(SUBSTR(CAST(NU_IDADE_N AS STRING), 2, 3) AS INT64)
-    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) IN ('1', '2', '3', '4') THEN 0
+    -- Idade em anos (começa com 4): extrai os últimos 3 dígitos
+    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) = '4' THEN CAST(SUBSTR(CAST(NU_IDADE_N AS STRING), 2, 3) AS INT64)
+    -- Idade > 100 anos (começa com 5): extrai os 3 dígitos e soma 100 (Ex: 5002 = 102 anos)
+    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) = '5' THEN 100 + CAST(SUBSTR(CAST(NU_IDADE_N AS STRING), 2, 3) AS INT64)
+    -- Bebês (1=Horas, 2=Dias, 3=Meses): idade em anos completos é 0
+    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) IN ('1', '2', '3') THEN 0
+    -- Ignorados ou não preenchidos viram NULL
     ELSE NULL 
   END AS idade,
 
 
--- referencial da base
 
+-- referencial da base
 FROM
  ${ref("violencia_alagoinhas_silver")}
 
