@@ -1,0 +1,12 @@
+config {
+    type: "view",
+    schema: "dados_alagoinhas_gold",
+    name: "indicador_temporal_violencia_gold_v",
+    description: "Descreve o ínicio e fim do período analisado"
+}
+
+SELECT 
+  MIN(data_notificacao) AS inicio_periodo,
+  MAX(data_notificacao) AS fim_periodo
+
+FROM ${ref("violencia_alagoinhas_gold_v")}

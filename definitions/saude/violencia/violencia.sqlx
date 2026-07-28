@@ -67,9 +67,113 @@ CASE
     WHEN SIT_CONJUG = 9 THEN 'Ignorado'
     WHEN SIT_CONJUG IS NULL THEN 'Não preenchido'
     ELSE 'Outro/Fora do padrão' 
-  END AS situacao_conjugal
+  END AS situacao_conjugal,
 
--- 
+-- transformação local de ocorrência
+
+CASE
+    WHEN CAST(LOCAL_OCOR AS STRING) = '1' THEN 'Hospital'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '2' THEN 'Outro estabelecimento de saúde'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '3' THEN 'Domicílio'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '4' THEN 'Via pública'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '5' THEN 'Outros'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '6' THEN 'Aldeia Indígena'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '7' THEN 'Comércio/Serviços'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '8' THEN 'Indústria/Construção'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '9' THEN 'Ignorado'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '99' THEN 'Ignorado' 
+    ELSE 'Não Informado' 
+  END AS local_ocorrencia_desc,
+
+-- transformação de recorrência
+
+CASE
+    WHEN CAST(OUT_VEZES AS STRING) = '1' THEN 'Sim'
+    WHEN CAST(OUT_VEZES AS STRING) = '2' THEN 'Não'
+    WHEN CAST(OUT_VEZES AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado' -- Trata os casos nulos (em branco na ficha)
+  END AS ocorreu_outras_vezes,
+
+-- transforamção lesão autoprovocada
+
+CASE
+    WHEN CAST(LES_AUTOP AS STRING) = '1' THEN 'Sim'
+    WHEN CAST(LES_AUTOP AS STRING) = '2' THEN 'Não'
+    WHEN CAST(LES_AUTOP AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado'
+  END AS lesao_autoprovocada,
+
+
+-- transformação motivo da violência
+
+CASE
+    WHEN CAST(VIOL_MOTIV AS STRING) = '1' THEN 'Sexismo'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '2' THEN 'Homofobia/Lesbofobia/Bifobia/Transfobia'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '3' THEN 'Racismo'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '4' THEN 'Intolerância Religiosa'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '5' THEN 'Xenofobia'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '6' THEN 'Conflito Geracional'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '7' THEN 'Situação de Rua'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '8' THEN 'Deficiência'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '9' THEN 'Outros'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '88' THEN 'Não se aplica'
+    WHEN CAST(VIOL_MOTIV AS STRING) = '99' THEN 'Ignorado'
+    ELSE 'Não Informado'
+  END AS motivo_violencia,
+
+-- transformação orientação sexual
+
+CASE
+    WHEN CAST(ORIENT_SEX AS STRING) = '1' THEN 'Heterossexual'
+    WHEN CAST(ORIENT_SEX AS STRING) = '2' THEN 'Homossexual (Gay/Lésbica)'
+    WHEN CAST(ORIENT_SEX AS STRING) = '3' THEN 'Bissexual'
+    WHEN CAST(ORIENT_SEX AS STRING) = '8' THEN 'Não se aplica'
+    WHEN CAST(ORIENT_SEX AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado'
+  END AS orientacao_sexual,
+
+-- transformação idade anos
+
+CASE 
+    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) = '5' THEN CAST(SUBSTR(CAST(NU_IDADE_N AS STRING), 2, 3) AS INT64)
+    WHEN SUBSTR(CAST(NU_IDADE_N AS STRING), 1, 1) IN ('1', '2', '3', '4') THEN 0
+    ELSE NULL 
+  END AS idade,
+
+
+-- referencial da base
 
 FROM
  ${ref("violencia_alagoinhas_silver")}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
