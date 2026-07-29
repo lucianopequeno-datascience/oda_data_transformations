@@ -18,25 +18,98 @@ SELECT
   DT_ACID AS data_acidente,
   SEM_ACID AS semana_acidente,
   ANO_NASC AS ano_nasc,
+  CS_GESTANT AS gestacao,
+
+  --tratamento idade
   CASE 
-    -- Se estiver na casa dos 4000 (Anos), subtrai 4000 para isolar a idade
     WHEN NU_IDADE_N >= 4000 AND NU_IDADE_N < 5000 THEN NU_IDADE_N - 4000
-    -- Se for menor que 4000 (Horas, Dias ou Meses), a idade em anos completos é 0
     WHEN NU_IDADE_N < 4000 THEN 0
     ELSE NULL 
   END AS idade_em_anos,
+
+  --tratamento sexo
   CASE
     WHEN CS_SEXO = 'F' THEN 'Feminino'
     WHEN CS_SEXO = 'M' THEN 'Masculino'
     WHEN CS_SEXO = 'I' THEN 'Ignorado'
   END AS sexo,
-  CS_GESTANT AS gestacao,
+
+-- tratamento raça cor
   CASE 
-   WHEN CS_RACA = 1 THEN 'Branca'
-   WHEN CS_RACA = 2 THEN 'Preta'
-   WHEN CS_RACA = 3 THEN 'Amarela'
-   WHEN CS_RACA = 4 THEN 'Parda'
-   WHEN CS_RACA = 9 THEN 'Ignorado'
-   END AS raca
+    WHEN CS_RACA = 1 THEN 'Branca'
+    WHEN CS_RACA = 2 THEN 'Preta'
+    WHEN CS_RACA = 3 THEN 'Amarela'
+    WHEN CS_RACA = 4 THEN 'Parda'
+    WHEN CS_RACA = 9 THEN 'Ignorado'
+    ELSE 'Não preenchido'
+  END AS raca,
+
+-- tratamento tipo de acidente
+  CASE 
+    WHEN TIPO_ACID = 1 THEN 'Típico'
+    WHEN TIPO_ACID = 2 THEN 'Trajeto'
+    WHEN TIPO_ACID = 9 THEN 'Ignorado'
+    WHEN TIPO_ACID IS NULL THEN 'Não preenchido'
+    ELSE 'Valor Inválido/Outros'
+  END AS desc_tipo_acidente,
+
+-- tratamento parte do corpo
+
+------primeira parte do corpo ------
+CASE PART_CORP1
+        WHEN 1 THEN 'Olho'
+        WHEN 2 THEN 'Cabeça'
+        WHEN 3 THEN 'Pescoço'
+        WHEN 4 THEN 'Tórax'
+        WHEN 5 THEN 'Abdome/Pelve'
+        WHEN 6 THEN 'Mão'
+        WHEN 7 THEN 'Membro Superior'
+        WHEN 8 THEN 'Membro Inferior'
+        WHEN 9 THEN 'Pé'
+        WHEN 10 THEN 'Todo o corpo'
+        WHEN 11 THEN 'Outro'
+        WHEN 99 THEN 'Ignorado'
+        ELSE 'Não preenchido' 
+    END AS parte_corpo_1,
+
+------segunda parte do corpo ------
+CASE PART_CORP2
+        WHEN 1 THEN 'Olho'
+        WHEN 2 THEN 'Cabeça'
+        WHEN 3 THEN 'Pescoço'
+        WHEN 4 THEN 'Tórax'
+        WHEN 5 THEN 'Abdome/Pelve'
+        WHEN 6 THEN 'Mão'
+        WHEN 7 THEN 'Membro Superior'
+        WHEN 8 THEN 'Membro Inferior'
+        WHEN 9 THEN 'Pé'
+        WHEN 10 THEN 'Todo o corpo'
+        WHEN 11 THEN 'Outro'
+        WHEN 99 THEN 'Ignorado'
+        ELSE 'Não preenchido' 
+    END AS parte_corpo_2,
+
+------terceira parte do corpo ------
+CASE PART_CORP3
+        WHEN 1 THEN 'Olho'
+        WHEN 2 THEN 'Cabeça'
+        WHEN 3 THEN 'Pescoço'
+        WHEN 4 THEN 'Tórax'
+        WHEN 5 THEN 'Abdome/Pelve'
+        WHEN 6 THEN 'Mão'
+        WHEN 7 THEN 'Membro Superior'
+        WHEN 8 THEN 'Membro Inferior'
+        WHEN 9 THEN 'Pé'
+        WHEN 10 THEN 'Todo o corpo'
+        WHEN 11 THEN 'Outro'
+        WHEN 99 THEN 'Ignorado'
+        ELSE 'Não preenchido' 
+    END AS parte_corpo_3,
+
+
+
+
+
+-- referencial da tabela
 FROM
   ${ref("acidentes_de_trabalho_silver")}
