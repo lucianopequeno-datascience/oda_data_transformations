@@ -1,0 +1,10 @@
+config {
+    type: "view",
+    schema: "dados_alagoinhas_gold",
+    name:"animaispeconhentos_2026_alagoinhas_gold_v"
+}
+
+SELECT *
+
+FROM 
+   ${ref("animaispeconhentos_alagoinhas_2026_silver")}

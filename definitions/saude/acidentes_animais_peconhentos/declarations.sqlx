@@ -1,0 +1,6 @@
+config {
+    type: "declaration",
+    schema: "dados_alagoinhas_silver",
+    name: "animaispeconhentos_alagoinhas_2026_silver",
+    description: "Realiza o tratamento e transformação de dados sobre acidentes com animais peçonhentos"
+}

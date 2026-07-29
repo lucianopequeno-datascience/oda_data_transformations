@@ -5,6 +5,7 @@ config {
   description: "Dados consolidados de acidentes de trabalho para o município de Alagoinhas/BA",
 }
 
+
 SELECT 
   TP_NOT AS tipo_notificacao,
   ID_AGRAVO AS id_agravo,
@@ -105,8 +106,6 @@ CASE PART_CORP3
         WHEN 99 THEN 'Ignorado'
         ELSE 'Não preenchido' 
     END AS parte_corpo_3,
-
-
 
 
 
