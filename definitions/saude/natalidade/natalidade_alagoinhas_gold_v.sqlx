@@ -9,8 +9,12 @@ SELECT
   ano,
   sequencial_nascimento,
   codigo_estabelecimento,  
+  data_nascimento,
+  peso,
+  idade_mae,
+  idade_pai,
 
---tratando sexo
+--tratamento sexo
   CASE 
     WHEN UPPER(CAST(sexo AS STRING)) IN ('1', 'M') THEN 'Masculino'
     WHEN UPPER(CAST(sexo AS STRING)) IN ('2', 'F') THEN 'Feminino'
@@ -18,7 +22,7 @@ SELECT
     ELSE 'Ignorado'
   END AS sexo,
 
---tratando raça cor
+--tratamentp raça cor
   CASE 
     WHEN CAST(raca_cor AS STRING) = '1' THEN 'Branca'
     WHEN CAST(raca_cor AS STRING) = '2' THEN 'Preta'
@@ -29,16 +33,44 @@ SELECT
     ELSE 'Não Informado' 
   END AS raca_cor,
 
---tratanto anomalia
+--tratamento anomalia
   CASE 
     WHEN CAST(id_anomalia AS STRING) = '1' THEN 'Sim'
     WHEN CAST(id_anomalia AS STRING) = '2' THEN 'Não'
     WHEN CAST(id_anomalia AS STRING) = '9' THEN 'Não Informado'
     ELSE 'Não Informado' 
-  END AS id_anomalia
+  END AS id_anomalia,
 
--- comentário
+--tratamento tipo parto
+ CASE 
+    WHEN CAST(tipo_parto AS STRING) = '1' THEN 'Normal'
+    WHEN CAST(tipo_parto AS STRING) = '2' THEN 'Cesáreo'
+    WHEN CAST(tipo_parto AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado'
+  END AS tipo_parto,
+
+--tratamento tipo de gravidez
+ CASE 
+    WHEN CAST(tipo_gravidez AS STRING) = '1' THEN 'Única'
+    WHEN CAST(tipo_gravidez AS STRING) = '2' THEN 'Dupla'
+    WHEN CAST(tipo_gravidez AS STRING) = '3' THEN 'Tríplice ou mais'
+    WHEN CAST(tipo_gravidez AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado' -- Captura os casos NULL
+  END AS tipo_gravidez,
+
+--tratamento situação conjugal
+ CASE 
+    WHEN CAST(estado_civil_mae AS STRING) = '1' THEN 'Solteira'
+    WHEN CAST(estado_civil_mae AS STRING) = '2' THEN 'Casada'
+    WHEN CAST(estado_civil_mae AS STRING) = '3' THEN 'Viúva'
+    WHEN CAST(estado_civil_mae AS STRING) = '4' THEN 'Separada/Divorciada'
+    WHEN CAST(estado_civil_mae AS STRING) = '5' THEN 'União Consensual'
+    WHEN CAST(estado_civil_mae AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Informado'
+  END AS estado_civil_mae,
+
+--tratamento escolaridade
 
 
-
+--referencial da base silver
 FROM  ${ref("natalidade_alagoinhas_silver")}
