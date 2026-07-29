@@ -4,7 +4,38 @@ config {
     name:"animaispeconhentos_2026_alagoinhas_gold_v"
 }
 
-SELECT *
+SELECT 
+  DT_NOTIFIC AS data_notificacao,
+  NU_ANO AS ano,
+  DT_SIN_PRI AS data_primeiros_sintomas,
+
+
+-- tratamento idade do paciente
+CASE 
+    WHEN NU_IDADE_N >= 4000 AND NU_IDADE_N < 5000 THEN NU_IDADE_N - 4000
+    WHEN NU_IDADE_N < 4000 THEN 0
+    ELSE NULL 
+  END AS idade_em_anos,
+
+
+-- tratamento sexo
+CASE  
+    WHEN CS_SEXO = 'F' THEN 'Feminino'
+    WHEN CS_SEXO = 'M' THEN 'Masculino'
+    ELSE 'Ignorado'
+  END AS sexo,
+
+-- tratamento raça
+ CASE 
+    WHEN CS_RACA = 1 THEN 'Branca'
+    WHEN CS_RACA = 2 THEN 'Preta'
+    WHEN CS_RACA = 3 THEN 'Amarela'
+    WHEN CS_RACA = 4 THEN 'Parda'
+    WHEN CS_RACA = 9 THEN 'Ignorado'
+    ELSE 'Não preenchido'
+  END AS raca,
+
+--
 
 FROM 
    ${ref("animaispeconhentos_alagoinhas_2026_silver")}
