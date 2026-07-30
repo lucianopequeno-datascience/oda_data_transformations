@@ -5,7 +5,62 @@ config {
     description: "Tratamento de dados sobre declaração de contas anuais em Alagoinhas "
 }
 
-SELECT * FROM
- ${ref("financas_dca_alagoinhas_silver")}
 
+WITH base_pivotada AS (
+  SELECT
+    exercicio,
+    ano,
+    instituicao,
+    cod_ibge,
+    uf,
+    populacao,
+    
+    
+    -- Coluna 1: Receita Total
+    SUM(CASE WHEN conta = 'Total das Receitas Orçamentárias' THEN valor ELSE 0 END) AS receita_total,
+    
+    -- Coluna 2: Despesa Total
+    SUM(CASE WHEN conta = 'Total das Despesas Orçamentárias' THEN valor ELSE 0 END) AS despesa_total,
+    
+    -- Coluna 3: Gastos com Pessoal (Insight muito importante em prefeituras)
+    SUM(CASE WHEN conta LIKE '%Despesa com Pessoal%' THEN valor ELSE 0 END) AS despesa_pessoal,
+
+    -- Coluna 4: Investimentos
+    SUM(CASE WHEN conta LIKE '%Investimentos%' THEN valor ELSE 0 END) AS despesa_investimentos
+
+  FROM
+    ${ref("financas_dca_alagoinhas_silver")} /* <-- ATENÇÃO: coloque o nome correto da sua tabela fonte aqui */
+  
+  /* Filtro opcional: caso tenha outras cidades e queira focar só em Alagoinhas (código IBGE de Alagoinhas é 2900702) */
+  WHERE cod_ibge = 2900702 
+  
+  /* Agrupamos por todas as dimensões, para que os valores sejam somados por ano e por instituição */
+  GROUP BY
+    exercicio,
+    ano,
+    instituicao,
+    cod_ibge,
+    uf,
+    populacao
+)
+
+/* 
+   ----------------------------------------------------------------
+   BLOCO 2: CRIANDO OS INDICADORES CALCULADOS PARA O PAINEL
+   ----------------------------------------------------------------
+*/
+SELECT
+  *,
+  -- 1. Resultado Orçamentário (Se sobrar dinheiro, fica positivo. Se faltar, fica negativo)
+  (receita_total - despesa_total) AS resultado_orcamentario,
+  
+  -- 2. Indicadores Per Capita (Usamos SAFE_DIVIDE para evitar erro caso população venha zerada/nula)
+  SAFE_DIVIDE(receita_total, populacao) AS receita_per_capita,
+  SAFE_DIVIDE(despesa_total, populacao) AS despesa_per_capita,
+
+  -- 3. Percentual de Gasto com Pessoal sobre a Receita (Indicador de alerta da LRF)
+  SAFE_DIVIDE(despesa_pessoal, receita_total) AS perc_gasto_pessoal
+  
+FROM
+  base_pivotada
  
