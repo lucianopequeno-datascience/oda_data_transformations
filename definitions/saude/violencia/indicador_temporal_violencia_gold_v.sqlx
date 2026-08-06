@@ -6,7 +6,7 @@ config {
 }
 
 SELECT 
-  MIN(data_notificacao) AS inicio_periodo,
+  MIN(data_notificacao) AS inicio_periodo_violencia_gold_v,
   MAX(data_notificacao) AS fim_periodo
 
 FROM ${ref("violencia_alagoinhas_gold_v")}

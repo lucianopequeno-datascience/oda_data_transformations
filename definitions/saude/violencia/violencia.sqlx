@@ -7,7 +7,7 @@ config {
 
 SELECT 
     DT_NOTIFIC AS data_notificacao,
-    NU_ANO AS ano,
+    NU_ANO AS ano_v,
 
  -- transformação sexo   
 CASE 
