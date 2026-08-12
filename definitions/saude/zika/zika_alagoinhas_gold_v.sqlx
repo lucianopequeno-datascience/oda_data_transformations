@@ -6,4 +6,4 @@ config {
 }
 
 SELECT * 
-FROM  ${ref("zika_alagoinhas_silver")}
+FROM  ${ref("zika_alagoinhas_2026_silver")}
