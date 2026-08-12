@@ -1,0 +1,6 @@
+config {
+    type: "declaration",
+    schema: "dados_alagoinhas_silver",
+    name: "tuberculose_alagoinhas_historico_silver",
+    description: "Declara camada silver para tratamento de dados Gold sobre tuberculose em Alagoinhas"
+}

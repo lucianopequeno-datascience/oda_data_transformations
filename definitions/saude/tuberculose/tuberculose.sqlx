@@ -1,0 +1,20 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"tuberculose_alagoinhas_historico_v",
+    description:"Tratamento de dados históricos sobre tuberculose em Alagoinhas"
+}
+
+SELECT * 
+  REPLACE(
+    CASE
+      WHEN CS_SEXO = "F" THEN "Feminino"
+      WHEN CS_SEXO = "M" THEN "Masculino"
+      ELSE "Ignorado"
+    END AS CS_SEXO
+  )   
+
+FROM
+
+${ref("tuberculose_alagoinhas_historico_silver")}
+
