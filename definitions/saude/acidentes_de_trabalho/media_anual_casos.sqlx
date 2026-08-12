@@ -1,0 +1,16 @@
+config {
+    type: "view",
+    schema: "dados_alagoinhas_gold",
+    name: "media_anual_acidentes_de_trabalho_alagoinhas_gold_v",
+    description: "Verifica a média anual de acidentes de trabalho"
+}
+
+SELECT 
+    ano,
+    COUNT(*) AS total_casos 
+FROM 
+    ${ref("acidentedetrabalho_alagoinhas_gold_v")}
+GROUP BY 
+    ano
+ORDER BY 
+    ano
