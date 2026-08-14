@@ -1,0 +1,22 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"periodo_notificacao_acidentesdetrabalho_gold_v",
+    description: "Descreve a primeira e última data de notificação sobre acidentes de trabalho em Alagoinhas",
+
+labels: {
+    autor:"luciano",
+    departamento:"saude"
+},
+
+columns: {
+    primeira_notificacao:"Descreve a data da primeira notificação na base de dados sobre acidentes de trabalho em Alagoinhas",
+    ultima_notificacao: "Descreve a data da última notificação na base de dados sobre acidentes de trabalho em Alagoinhas"}
+}
+
+SELECT 
+  MIN(DT_NOTIFIC) AS primeira_notificacao,
+  MAX(DT_NOTIFIC) AS ultima_notificacao
+
+FROM ${ref("acidentes_de_trabalho_silver")}
+

@@ -3,7 +3,20 @@ config {
   schema: "dados_alagoinhas_gold",
   name: "acidentedetrabalho_alagoinhas_gold_v",
   description: "Dados consolidados de acidentes de trabalho para o município de Alagoinhas/BA",
-}
+
+labels: {
+  autor: "luciano",
+  departamento: "saude"
+},
+
+columns: {
+  tipo_notificacao:"Define o tipo de notificação referente ao acidente de trabalho",
+  id_agravo:"Código do agravo",
+  data_notificacao:"Data da notificação na unidade de saúde",
+  semana_notificacao: "Semana da notificação na unidade de saúde",
+  ano: "Ano da notificação na unidade de saúde",
+  uf_notificacao:""
+}}
 
 
 SELECT 
@@ -19,7 +32,6 @@ SELECT
   DT_ACID AS data_acidente,
   SEM_ACID AS semana_acidente,
   ANO_NASC AS ano_nasc,
-  CS_GESTANT AS gestacao,
 
   --tratamento idade
   CASE 
@@ -107,6 +119,64 @@ CASE PART_CORP3
         ELSE 'Não preenchido' 
     END AS parte_corpo_3,
 
+----tratamento gestante
+
+CASE CS_GESTANT
+    WHEN 1 THEN '1º Trimestre'
+    WHEN 2 THEN '2º Trimestre'
+    WHEN 3 THEN '3º Trimestre'
+    WHEN 4 THEN 'Idade gestacional ignorada'
+    WHEN 5 THEN 'Não'
+    WHEN 6 THEN 'Não se aplica'
+    WHEN 9 THEN 'Ignorado'
+    ELSE 'Não Informado' 
+  END AS situacao_gestacional,
+
+
+-- tratamento escolaridade
+
+CASE CAST(CS_ESCOL_N AS STRING) 
+    WHEN '0' THEN 'Analfabeto'
+    WHEN '1' THEN '1ª a 4ª série incompleta do EF'
+    WHEN '2' THEN '4ª série completa do EF'
+    WHEN '3' THEN '5ª à 8ª série incompleta do EF'
+    WHEN '4' THEN 'Ensino fundamental completo'
+    WHEN '5' THEN 'Ensino médio incompleto'
+    WHEN '6' THEN 'Ensino médio completo'
+    WHEN '7' THEN 'Educação superior incompleta'
+    WHEN '8' THEN 'Educação superior completa'
+    WHEN '9' THEN 'Ignorado'
+    WHEN '10' THEN 'Não se aplica'
+    ELSE 'Não informado' 
+  END AS escolaridade,
+
+-- tratamento situação de trabalho
+
+CASE CAST(SIT_TRAB AS STRING)
+    WHEN '1' THEN 'Empregado registrado CLT'
+    WHEN '2' THEN 'Empregado não registrado'
+    WHEN '3' THEN 'Autônomo'
+    WHEN '4' THEN 'Servidor público estatutário'
+    WHEN '5' THEN 'Servidor público celetista'
+    WHEN '6' THEN 'Aposentado'
+    WHEN '7' THEN 'Desempregado'
+    WHEN '8' THEN 'Trabalho temporário'
+    WHEN '9' THEN 'Cooperativado'
+    WHEN '10' THEN 'Trabalhador avulso'
+    WHEN '11' THEN 'Empregador'
+    WHEN '12' THEN 'Outros'
+    WHEN '99' THEN 'Ignorado'
+    ELSE 'Não informado'
+  END AS situacao_trabalho,
+
+-- tratamento atendimento médico
+
+  CASE CAST(ATENDE_MED AS STRING)
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado'
+  END AS recebeu_atendimento_medico,
 
 
 -- referencial da tabela
