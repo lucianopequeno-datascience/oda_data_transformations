@@ -1,10 +1,18 @@
 config {
+
     type: "view",
     schema: "dados_alagoinhas_gold",
     name:"animaispeconhentos_2026_alagoinhas_gold_v",
     description: "Base tratada de dados sobre acidentes com animais peçomhentos em Alagoinhas durante a série histporica",
 
+
 // Documentação das colunas para o Knowledge Catalog
+
+labels: {
+    autor: "luciano",
+    departamento: "saude",
+  },
+
 columns: {
     data_notificacao: "Descreve a data de notificação na unidade de saúde",
     ano: "Descreve o ano de notificação",
@@ -12,7 +20,11 @@ columns: {
     idade_em_anos: "Descreve a idade em anos do paciente",
     sexo: "Descreve o sexo do paciente",
     raca: "Descreve a raca/cor do paciente"}
+
 }
+
+
+
 
 SELECT 
   DT_NOTIFIC AS data_notificacao,
