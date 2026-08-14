@@ -1,0 +1,39 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "fatalidade_trabalho_geral_gold_v",
+  description: "Visão consolidada para gráficos (anuais) e KPIs (gerais)"
+}
+
+SELECT 
+  sexo,
+  ano,
+  
+  -- 1. Métricas para os Gráficos (Agrupadas por sexo/ano)
+  COUNT(*) AS total_acidentes_anual,
+  COUNTIF(evolucao_caso = 'Óbito por acidente de trabalho') AS total_obitos_anual,
+  
+  -- 2. Métricas para os Cards/KPIs (Totais Gerais da base inteira)
+  SUM(COUNT(*)) OVER() AS total_acidentes_geral,
+  SUM(COUNTIF(evolucao_caso = 'Óbito por acidente de trabalho')) OVER() AS total_obitos_geral,
+  
+  -- 3. Taxa de Letalidade Geral (Percentual histórico total)
+  ROUND(
+    SAFE_DIVIDE(
+      SUM(COUNTIF(evolucao_caso = 'Óbito por acidente de trabalho')) OVER(), 
+      SUM(COUNT(*)) OVER()
+    ) * 100.0, 
+  2) AS taxa_letalidade_geral_pct,
+
+  -- 4. Taxa de Letalidade Anual (Percentual do ano específico)
+  ROUND(
+    SAFE_DIVIDE(
+      COUNTIF(evolucao_caso = 'Óbito por acidente de trabalho') * 100.0, 
+      COUNT(*)
+    ), 
+  2) AS taxa_letalidade_anual_pct
+
+FROM 
+  ${ref("acidentedetrabalho_alagoinhas_gold_v")}
+GROUP BY 
+  sexo, ano

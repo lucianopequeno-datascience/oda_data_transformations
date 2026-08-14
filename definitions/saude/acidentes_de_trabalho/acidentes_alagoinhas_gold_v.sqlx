@@ -178,6 +178,20 @@ CASE CAST(SIT_TRAB AS STRING)
     ELSE 'Não informado'
   END AS recebeu_atendimento_medico,
 
+-- tratamento da evolução do caso
+
+  CASE CAST(EVOLUCAO AS STRING)
+    WHEN '1' THEN 'Cura'
+    WHEN '2' THEN 'Incapacidade temporária'
+    WHEN '3' THEN 'Incapacidade permanente'
+    WHEN '4' THEN 'Incapacidade total permanente'
+    WHEN '5' THEN 'Óbito por acidente de trabalho'
+    WHEN '6' THEN 'Óbito por outras causas'
+    WHEN '7' THEN 'Outro'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado'
+  END AS evolucao_caso,
+
 
 -- referencial da tabela
 FROM

@@ -1,0 +1,24 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "total_obitos_acidente_trabalho_v",
+  description: "Contagem de óbitos por acidentes de trabalho, por sexo e ano"
+}
+
+WITH obitos_registrados AS (
+  SELECT *
+  FROM ${ref("acidentedetrabalho_alagoinhas_gold_v")}
+  WHERE evolucao_caso = 'Óbito por acidente de trabalho'
+)
+
+SELECT
+  ano,
+  sexo,
+  COUNT(*) AS total_obitos
+FROM obitos_registrados
+GROUP BY
+  ano,
+  sexo
+ORDER BY
+  ano,
+  sexo
