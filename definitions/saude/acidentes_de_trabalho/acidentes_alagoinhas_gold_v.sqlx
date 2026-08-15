@@ -192,6 +192,14 @@ CASE CAST(SIT_TRAB AS STRING)
     ELSE 'Não informado'
   END AS evolucao_caso,
 
+-- tratamento do regime de tratamento
+  CASE CAST(REGIME AS STRING)
+    WHEN '1' THEN 'Hospitalar'
+    WHEN '2' THEN 'Ambulatorial'
+    WHEN '3' THEN 'Outro'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado'
+  END AS regime_tratamento,
 
 -- referencial da tabela
 FROM
