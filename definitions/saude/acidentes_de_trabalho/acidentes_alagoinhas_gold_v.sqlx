@@ -15,7 +15,26 @@ columns: {
   data_notificacao:"Data da notificação na unidade de saúde",
   semana_notificacao: "Semana da notificação na unidade de saúde",
   ano: "Ano da notificação na unidade de saúde",
-  uf_notificacao:""
+  uf_notificacao:"Unidade federativa da ocorrência",
+  id_municipio:"Código do IBGE para o múnicipio da ocorrência",
+  id_regiao: "Código da macro região",
+  unidade_notificadora: "Unidade de saúde que recebeu a notificação do acidente de trabalho",
+  data_acidente: "Data da ocorrência do acidente (esta data é da ocorrência, não da notificação na US)",
+  semana_acidente: "Semana em que correu a notificação (padrão em boletins epidemiologicos)",
+  ano_nasc: "Ano de nascimento do paciente",
+  idade_em_anos: "Idade do paciente",
+  sexo: "Sexo do paciente",
+  raca: "Raça/cor/grupo étnico do paciente",
+  desc_tipo_acidente: "Tipo de acidente, sendo típico no ambiente de trabalho e trajeto no percuso até o trabalho",
+  parte_corpo_1:"Descreve a primeira parte do corpo afetada (se houver só esta)",
+  parte_corpo_2:"Descreve a segunda parte do corpo afetata (se houverem duas partes afetadas)",
+  parte_corpo_3:"Descreve a terceira parte do corpo afetada (se houverem 3)",
+  situacao_gestacional: "Descreve a situação gestacional das mulheres com agravos",
+  escolaridade: "Descreve a escolaridade do paciente (útil para análises sociais)",
+  situacao_trabalho: "Descreve o vínculo empregatício do trabalhador com o agravo",
+  recebeu_atendimento_medico:"Descreve se o paciente recebeu atendimento médico/primeiros socorros",
+  evolucao_caso: "Descreve a evolução do caso e os dados foram permanentes ou não, ou resultaram em óbito",
+  regime_tratamento:"Descreve o tipo de regime de tratamento que o paciente recebeu"
 }}
 
 
