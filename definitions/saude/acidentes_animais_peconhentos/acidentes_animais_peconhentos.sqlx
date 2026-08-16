@@ -5,9 +5,6 @@ config {
     name:"animaispeconhentos_2026_alagoinhas_gold_v",
     description: "Base tratada de dados sobre acidentes com animais peçomhentos em Alagoinhas durante a série histporica",
 
-
-// Documentação das colunas para o Knowledge Catalog
-
 labels: {
     autor: "luciano",
     departamento: "saude",
@@ -57,7 +54,39 @@ CASE
     ELSE 'Não preenchido'
   END AS raca,
 
---
+-- tratamento situação gestacional
+
+-- tratamento escolaridade
+
+-- tratamento local da lesao
+
+CASE
+    WHEN ANT_LOCA_1 = 1 THEN 'Cabeça'
+    WHEN ANT_LOCA_1 = 2 THEN 'Braço'
+    WHEN ANT_LOCA_1 = 3 THEN 'Antebraço'
+    WHEN ANT_LOCA_1 = 4 THEN 'Mão'
+    WHEN ANT_LOCA_1 = 5 THEN 'Dedo da mão'
+    WHEN ANT_LOCA_1 = 6 THEN 'Tronco'
+    WHEN ANT_LOCA_1 = 7 THEN 'Coxa'
+    WHEN ANT_LOCA_1 = 8 THEN 'Perna'
+    WHEN ANT_LOCA_1 = 9 THEN 'Pé'
+    WHEN ANT_LOCA_1 = 10 THEN 'Dedo do pé'
+    WHEN ANT_LOCA_1 = 99 THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS local_picada_1,
+
+-- tratamento tipo de acidente
+
+CASE
+    WHEN TP_ACIDENT = 1 THEN 'Serpente'
+    WHEN TP_ACIDENT = 2 THEN 'Aranha'
+    WHEN TP_ACIDENT = 3 THEN 'Escorpião'
+    WHEN TP_ACIDENT = 4 THEN 'Lagarta'
+    WHEN TP_ACIDENT = 5 THEN 'Abelha'
+    WHEN TP_ACIDENT = 6 THEN 'Outros'
+    WHEN TP_ACIDENT = 9 THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS tipo_acidente,
 
 FROM 
    ${ref("animaispeconhentos_alagoinhas_2026_silver")}
