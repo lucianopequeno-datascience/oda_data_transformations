@@ -1,6 +1,0 @@
-config {
-  type: "declaration",
-  schema: "dados_alagoinhas_silver", 
-  name: "cid10",
-  description: "Dicionário CID-10"
-}
