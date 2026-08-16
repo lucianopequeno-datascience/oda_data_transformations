@@ -48,9 +48,21 @@ SELECT
   ID_MUNICIP AS id_municipio,
   ID_REGIONA AS id_regiao,
   ID_UNIDADE AS unidade_notificadora,
-  DT_ACID AS data_acidente,
+  PARSE_DATE('%Y%m%d', CAST(DT_ACID AS STRING)) AS data_acidente,
   SEM_ACID AS semana_acidente,
   ANO_NASC AS ano_nasc,
+  HORA_ACID AS hora_acidente,
+
+
+-- coluna para turno
+
+  CASE 
+    WHEN HORA_ACID >= 0 AND HORA_ACID < 4 THEN 'Madrugada'
+    WHEN HORA_ACID >= 4 AND HORA_ACID < 11 THEN 'Manhã'
+    WHEN HORA_ACID >= 12 AND HORA_ACID < 18 THEN 'Vespertino'
+    WHEN HORA_ACID >= 18 AND HORA_ACID <= 23 THEN 'Noturno'
+    ELSE 'Inválido/ Não informado' 
+  END AS turno_acidente,
 
   --tratamento idade
   CASE 
