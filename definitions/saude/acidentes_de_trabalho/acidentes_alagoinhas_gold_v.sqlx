@@ -1,5 +1,5 @@
 config {
-  type: "view",
+  type: "table",
   schema: "dados_alagoinhas_gold",
   name: "acidentedetrabalho_alagoinhas_gold_v",
   description: "Dados consolidados de acidentes de trabalho para o município de Alagoinhas/BA",
@@ -34,7 +34,9 @@ columns: {
   situacao_trabalho: "Descreve o vínculo empregatício do trabalhador com o agravo",
   recebeu_atendimento_medico:"Descreve se o paciente recebeu atendimento médico/primeiros socorros",
   evolucao_caso: "Descreve a evolução do caso e os dados foram permanentes ou não, ou resultaram em óbito",
-  regime_tratamento:"Descreve o tipo de regime de tratamento que o paciente recebeu"
+  regime_tratamento:"Descreve o tipo de regime de tratamento que o paciente recebeu",
+  hora_acidente:"Descreve a hora que o acidente ocorreu",
+  turno_acidente:"Descreve o turno que o acidente ocorreu"
 }}
 
 
