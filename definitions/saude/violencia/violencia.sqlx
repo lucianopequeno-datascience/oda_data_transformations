@@ -1,9 +1,21 @@
 config {
-    type:"view",
+    type:"table",
     schema:"dados_alagoinhas_gold",
     name:"violencia_alagoinhas_gold_v",
-    description: "Tratamento de dados sobre violência interpessoal ou autoprovocada"
-}
+    description: "Tratamento de dados sobre violência interpessoal ou autoprovocada",
+
+labels: {
+  autor:"luciano",
+  departamento:"saude"
+},
+
+columns: {
+   data_notificacao: "Descreve a data de notificação da ocorrência",
+   ano_v: "Descreve o ano da ocorrência",
+   sexo: "Descreve o sexo do paciente com o agravo",
+   situacao_gestacional:"Descreve a situação gestacional do paciente (para o sexo feminino)",
+   raca_cor:"Descreve a raça/cor do paciente"
+}}
 
 SELECT 
     DT_NOTIFIC AS data_notificacao,
@@ -145,7 +157,42 @@ CASE
     ELSE NULL 
   END AS idade,
 
+-- transformação identidade de gênero
 
+CASE 
+    WHEN CAST(IDENT_GEN AS STRING) = '1' THEN 'Travesti'
+    WHEN CAST(IDENT_GEN AS STRING) = '2' THEN 'Mulher Transexual'
+    WHEN CAST(IDENT_GEN AS STRING) = '3' THEN 'Homem Transexual'
+    WHEN CAST(IDENT_GEN AS STRING) = '8' THEN 'Não se aplica (Cisgênero/Menor)'
+    WHEN CAST(IDENT_GEN AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Preenchido/Nulo'
+  END AS identidade_genero,
+
+  -- transformação local de ocorrÊncia
+
+CASE 
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('1', '01') THEN 'Residência'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('2', '02') THEN 'Habitação Coletiva'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('3', '03') THEN 'Escola'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('4', '04') THEN 'Local de Prática Esportiva'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('5', '05') THEN 'Bar ou Similar'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('6', '06') THEN 'Via Pública'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('7', '07') THEN 'Comércio/Serviços'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('8', '08') THEN 'Indústria/Construção'
+    WHEN CAST(LOCAL_OCOR AS STRING) IN ('9', '09') THEN 'Outro'
+    WHEN CAST(LOCAL_OCOR AS STRING) = '99' THEN 'Ignorado'
+    ELSE 'Não Preenchido/Nulo'
+  END AS local_ocorrencia_descricao,
+
+--- transformação agressor
+
+CASE 
+    WHEN CAST(AUTOR_SEXO AS STRING) = '1' THEN 'Masculino'
+    WHEN CAST(AUTOR_SEXO AS STRING) = '2' THEN 'Feminino'
+    WHEN CAST(AUTOR_SEXO AS STRING) = '3' THEN 'Ambos os sexos'
+    WHEN CAST(AUTOR_SEXO AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não Preenchido/Nulo'
+  END AS agressor_perfil_sexo,
 
 -- referencial da base
 FROM
