@@ -34,3 +34,4 @@ SELECT
   ESTCIV AS estado_civil,
   ESC AS escolaridade
 FROM ${ref("mortalidade_alagoinhas_silver")}
+

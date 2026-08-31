@@ -1,25 +1,217 @@
 config {
-    type:"view",
-    schema:"dados_alagoinhas_gold",
-    name:"tuberculose_alagoinhas_historico_v",
-    description:"Tratamento de dados históricos sobre tuberculose em Alagoinhas"
+  type: "table",
+  schema:"dados_alagoinhas_gold",
+  name:"tuberculose_alagoinhas_historico_v",
+
+labels: {
+  autor:"luciano",
+  departamento:"saude"
+},
+
+columns: {
+  data_notificacao:"Apresenta a data que o paciente notificou sintomas na unidade de saúde",
+  id_agravo:"Descreve o código ID do agravo notificado",
+  tipo_notificacao:"Descreve o tipo de notificação",
+  ano:"Descreve o ano da notificação do agravo",
+  uf_notificacao:"Descreve a sigla UF (União Federativa) da notificação",
+  id_municipal:"Apresenta o ID municipal da notificação",
+  id_regional:"Apresenta o ID da região de notificação",
+  data_diagnostico:"Apresenta a data de diagnóstico, útil para verificar o tempo médio entre data de notificação e data de diagnóstico",
+  ano_nascimento:"Descreve o ano de nascimento do paciente com agravo",
+  idade_em_anos:"Descreve a idade do paciente, útil para verificar distribuição etária de recorrênciada doença",
+  sexo:"Descreve o sexo do paciente, útil para verificar a incidência de casos por sexo",
+  situacao_gestacional:"Descreve a situação gestacional da paciente sexo feminino",
+  raca_cor:"Descreve a raça/cor/etnia do paciente",
+  uf:"UF do caso",
+  id_municipio_residencia:"Descreve o ID do município de residência do paciente",
+  id_regional_residencia:"Descreve o ID regional da residência do paciente",
+  id_pais:"Descreve o ID do país do paciente",
+  duplicidade_notificacao:"Descreve se a notificação é ou não duplicada",
+  indicador_vinculacao:"Descreve se a notificação de tuberculose é vínculada a notificação de outro agravo",
+  data_digitacao:"Descreve a data que a notificação foi inserida/digitada no sistema",
+  data_transferencia_us:"Descreve a data em que ocorreu a transferência do paciente para uma unidade de saúde",
+  data_transferencia_dm:"Descreve a data de trasnferência para outro distrito/município. Útil para verificar a quantidade de transferências por notificação total",
+  data_trasnferencia_sm:"Descreve a data de transferência para outro serviço de saúde/município. Útil para verificar a eficiência dos serviços de saúde",
+  registro_migrado:"Descreve se a notificação foi migrada ou não de outro sistema",
+  ocupacao_paciente:"Descreve a ocupação do paciente",
+  resultado_raiox_torax:"Descreve a situação/resultado do raio X do tórax do paciente",
+  resultado_teste_tuberculinico:"Descreve o resultado para o teste tuberculinico",
+  forma_tuberculose:"Descreve a forma da tuberculose",
+  resultado_hiv:"Descreve o resultado para o teste de HIV",
+  situacao_encerramento:"Descreve a situação do encerramento do caso do paciente",
+  beneficio_governamental:"Descreve se o paciente possui ou não benefício do governo",
+  escolaridade:"Descreve o nível de escolaridade do paciente",
+
 }
 
--- Base inicialmente tratada no BigQuery, fizemos o ajuste com REPLACE para tratar apenas novas colunas específicas em seus valores
+}
 
-SELECT * 
-  REPLACE(
-    --- tratamento de sexo
-    CASE
-      WHEN CS_SEXO = "F" THEN "Feminino"
-      WHEN CS_SEXO = "M" THEN "Masculino"
-      ELSE "Ignorado"
-    END AS CS_SEXO
+SELECT 
+  DT_NOTIFIC AS data_notificacao,
+  ID_AGRAVO AS id_agravo,
+  TP_NOT AS tipo_notificacao,
+  NU_ANO AS ano,
+  SG_UF_NOT AS uf_notificacao,
+  ID_MUNICIP AS id_municipal,
+  ID_REGIONA AS id_regional,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(DT_DIAG AS STRING)) AS data_diagnostico,
+  ANO_NASC AS ano_nascimento,
+  SG_UF AS uf,
+  ID_MN_RESI AS id_municipio_residencia,
+  ID_RG_RESI AS id_regional_residencia,
+  ID_PAIS AS id_pais,
+  DT_DIGITA AS data_digitacao,
+  DT_TRANSUS AS data_transferencia_us,
+  DT_TRANSDM AS data_transferencia_dm,
+  DT_TRANSSM AS data_trasnferencia_sm,
+  ID_OCUPA_N AS ocupacao_paciente,
 
-    --- tratamento de escolaridade
-  )   
+--- tratamento de idade
+CASE 
+    WHEN NU_IDADE_N BETWEEN 4000 AND 4999 THEN NU_IDADE_N - 4000
+    WHEN NU_IDADE_N BETWEEN 5000 AND 5999 THEN NU_IDADE_N - 4900
+    WHEN NU_IDADE_N < 4000 THEN 0
+    ELSE NULL 
+END AS idade_em_anos,
 
-FROM
+--- tratamento sexo
+CASE 
+   WHEN CS_SEXO = "F" THEN "Feminino"
+   WHEN CS_SEXO = "M" THEN "Masculino"
+END AS sexo,
 
-${ref("tuberculose_alagoinhas_historico_silver")}
+--- tratamento situação gestacional
+CASE
+    WHEN CS_GESTANT = 1 THEN '1º trimestre'
+    WHEN CS_GESTANT = 2 THEN '2º trimestre'
+    WHEN CS_GESTANT = 3 THEN '3º trimestre'
+    WHEN CS_GESTANT = 4 THEN 'Idade gestacional ignorada'
+    WHEN CS_GESTANT = 5 THEN 'Não'
+    WHEN CS_GESTANT = 6 THEN 'Não se aplica'
+    WHEN CS_GESTANT = 9 THEN 'Ignorado'
+    ELSE NULL
+END AS situacao_gestacional,
 
+---tratamento raça/cor
+CASE
+    WHEN CS_RACA = 1 THEN 'Branca'
+    WHEN CS_RACA = 2 THEN 'Preta'
+    WHEN CS_RACA = 3 THEN 'Amarela'
+    WHEN CS_RACA = 4 THEN 'Parda'
+    WHEN CS_RACA = 5 THEN 'Indígena'
+    WHEN CS_RACA = 9 THEN 'Ignorado'
+    WHEN CS_RACA = 0 THEN 'Não informado'
+    ELSE NULL
+END AS raca_cor,
+
+--- tratamento escolaridade
+CASE
+    WHEN CS_ESCOL_N = 0 THEN 'Analfabeto'
+    WHEN CS_ESCOL_N = 1 THEN '1ª a 4ª série incompleta do EF'
+    WHEN CS_ESCOL_N = 2 THEN '4ª série completa do EF'
+    WHEN CS_ESCOL_N = 3 THEN '5ª a 8ª série incompleta do EF'
+    WHEN CS_ESCOL_N = 4 THEN 'Ensino Fundamental completo'
+    WHEN CS_ESCOL_N = 5 THEN 'Ensino Médio incompleto'
+    WHEN CS_ESCOL_N = 6 THEN 'Ensino Médio completo'
+    WHEN CS_ESCOL_N = 7 THEN 'Educação Superior incompleta'
+    WHEN CS_ESCOL_N = 8 THEN 'Educação Superior completa'
+    WHEN CS_ESCOL_N = 9 THEN 'Ignorado'
+    WHEN CS_ESCOL_N = 10 THEN 'Não se aplica'
+    ELSE "Não informado"
+END AS escolaridade,
+
+---tratamento notificação duplicada
+
+CASE
+    WHEN NDUPLIC_N = 0 THEN 'Não duplicada'
+    WHEN NDUPLIC_N = 1 THEN 'Duplicada'
+    ELSE 'Não informado'
+END AS duplicidade_notificacao,
+
+--- tratamento vínculo notificação
+
+CASE
+    WHEN IN_VINCULA = "0" THEN 'Não'
+    WHEN IN_VINCULA = "1" THEN 'Sim'
+    ELSE 'Não informado'
+END AS indicador_vinculacao,
+
+--- tratamento registro migrado
+
+CASE
+    WHEN MIGRADO_W = "0" THEN 'Não'
+    WHEN MIGRADO_W = "1" THEN 'Sim'
+    ELSE 'Não informado'
+END AS registro_migrado,
+
+--- tratamento raio x toráx
+
+CASE
+    WHEN RAIOX_TORA = 0 THEN 'Não realizado'
+    WHEN RAIOX_TORA = 1 THEN 'Suspeito'
+    WHEN RAIOX_TORA = 2 THEN 'Normal'
+    WHEN RAIOX_TORA = 3 THEN 'Outra patologia'
+    WHEN RAIOX_TORA = 4 THEN 'Compatível com TB'
+    ELSE 'Não informado'
+END AS resultado_raiox_torax,
+
+--- tratamento teste tuberulinico
+
+CASE
+    WHEN TESTE_TUBE = "0" THEN 'Não realizado'
+    WHEN TESTE_TUBE = "1" THEN 'Não reator'
+    WHEN TESTE_TUBE = "2" THEN 'Reator fraco'
+    WHEN TESTE_TUBE = "3" THEN 'Reator forte'
+    WHEN TESTE_TUBE = "4" THEN 'Não se aplica'
+    ELSE 'Não informado'
+END AS resultado_teste_tuberculinico,
+
+--- tratamento forma tuberculose
+
+CASE
+    WHEN FORMA = 1 THEN 'Pulmonar'
+    WHEN FORMA = 2 THEN 'Extrapulmonar'
+    WHEN FORMA = 3 THEN 'Pulmonar + extrapulmonar'
+    ELSE 'Não informado'
+END AS forma_tuberculose,
+
+--- tratamento resultado hiv
+
+CASE
+    WHEN HIV = 1 THEN 'Positivo'
+    WHEN HIV = 2 THEN 'Negativo'
+    WHEN HIV = 3 THEN 'Em andamento'
+    WHEN HIV = 4 THEN 'Não realizado'
+    ELSE 'Não informado'
+END AS resultado_hiv,
+
+--- tratamento situação do encerramento
+
+CASE
+    WHEN SITUA_ENCE = 0 THEN 'Transferência'
+    WHEN SITUA_ENCE = 1 THEN 'Cura'
+    WHEN SITUA_ENCE = 2 THEN 'Abandono'
+    WHEN SITUA_ENCE = 3 THEN 'Óbito por tuberculose'
+    WHEN SITUA_ENCE = 4 THEN 'Óbito por outras causas'
+    WHEN SITUA_ENCE = 5 THEN 'Transferência não especificada'
+    WHEN SITUA_ENCE = 6 THEN 'Mudança de diagnóstico'
+    WHEN SITUA_ENCE = 7 THEN 'TB-DR'
+    WHEN SITUA_ENCE = 8 THEN 'Falência'
+    WHEN SITUA_ENCE = 9 THEN 'Abandono primário'
+    WHEN SITUA_ENCE = 10 THEN 'Mudança de esquema'
+    WHEN SITUA_ENCE = 12 THEN 'Continuidade do tratamento'
+    ELSE 'Não informado'
+END AS situacao_encerramento,
+
+--- tratamento beneficio governamental
+
+CASE
+    WHEN BENEF_GOV = 0 THEN 'Não'
+    WHEN BENEF_GOV = 1 THEN 'Sim'
+    WHEN BENEF_GOV = 2 THEN 'Não se aplica'
+    WHEN BENEF_GOV = 9 THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS beneficio_governamental,
+
+--- referencial da tabela
+FROM ${ref("tuberculose_alagoinhas_historico_silver")}
