@@ -1,0 +1,63 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "metricas_especiais_tuberculose_v",
+  description: "Realiza métricas especiais para tuberculose na série histórica",
+
+  labels: {
+    autor: "luciano",
+    departamento: "saude"
+  }
+}
+
+-- CTE para total de casos
+WITH casos_tuberculose AS (
+  SELECT 
+    COUNT(data_notificacao) AS notificacoes_total
+  FROM ${ref("tuberculose_alagoinhas_historico_v")}
+
+),
+
+-- CTE para óbitos por tuberculose
+obitos_tuberculose AS (
+  SELECT 
+    COUNT(situacao_encerramento) AS obitos
+  FROM ${ref("tuberculose_alagoinhas_historico_v")}
+  WHERE situacao_encerramento = "Óbito por tuberculose"
+
+),
+
+-- CTE para casos curados
+taxa_cura AS (
+  SELECT 
+    COUNT(situacao_encerramento) AS total_cura
+  FROM ${ref("tuberculose_alagoinhas_historico_v")}
+  WHERE situacao_encerramento = "Cura"
+
+),
+
+-- CTE para métricas de desfecho
+
+metricas_tuberculose AS ( 
+  SELECT
+    casos_tuberculose.notificacoes_total, 
+    obitos_tuberculose.obitos, 
+    taxa_cura.total_cura, 
+
+    SAFE_DIVIDE( 
+      taxa_cura.total_cura, 
+      casos_tuberculose.notificacoes_total 
+    ) * 100 AS percentual_cura, 
+
+    SAFE_DIVIDE( 
+      obitos_tuberculose.obitos, 
+      casos_tuberculose.notificacoes_total 
+    ) * 100 AS percentual_obitos
+
+  FROM casos_tuberculose 
+  CROSS JOIN obitos_tuberculose 
+  CROSS JOIN taxa_cura
+)
+
+SELECT *
+FROM metricas_tuberculose
