@@ -101,7 +101,7 @@ CASE
     WHEN CS_RACA = 5 THEN 'Indígena'
     WHEN CS_RACA = 9 THEN 'Ignorado'
     WHEN CS_RACA = 0 THEN 'Não informado'
-    ELSE NULL
+    ELSE 'Não informado'
 END AS raca_cor,
 
 --- tratamento escolaridade
