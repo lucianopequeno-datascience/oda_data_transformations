@@ -16,10 +16,16 @@ columns: {
     data_primeiros_sintomas: "Descreve a data dos primeiros sintomas",
     idade_em_anos: "Descreve a idade em anos do paciente",
     sexo: "Descreve o sexo do paciente",
-    raca: "Descreve a raca/cor do paciente"}
-
+    raca: "Descreve a raca/cor do paciente",
+    tipo_notificacao:"Descreve o tipo de notificação na unidade de saúde",
+    escolaridade:"Descreve a escolaridade do paciente com o agravo",
+    situacao_gestacional:"Descreve a situação gestacional de pacientes do sexo feminino",
+    local_picada_1:"Descreve o local da picada principal, pois podem haver outras",
+    tempo_atendimento:"Descreve o tempo de atendimento do paciente",
+    dor_local:"Descreve se o paciente sentiu/sente dor no local da picada",
+    tipo_acidente:"Descreve o tipo de animal que causou o acidente"
+    }
 }
-
 
 
 
@@ -27,6 +33,7 @@ SELECT
   DT_NOTIFIC AS data_notificacao,
   NU_ANO AS ano,
   DT_SIN_PRI AS data_primeiros_sintomas,
+  TP_NOT AS tipo_notificacao,
 
 
 -- tratamento idade do paciente
@@ -56,7 +63,33 @@ CASE
 
 -- tratamento situação gestacional
 
+ CASE CAST(CS_GESTANT AS STRING)
+    WHEN '1' THEN '1º trimestre'
+    WHEN '2' THEN '2º trimestre'
+    WHEN '3' THEN '3º trimestre'
+    WHEN '4' THEN 'Idade gestacional ignorada'
+    WHEN '5' THEN 'Não gestante'
+    WHEN '6' THEN 'Não se aplica'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido' -- Cobre os casos NULL
+  END AS situacao_gestacional,
+
 -- tratamento escolaridade
+
+CASE CAST(CS_ESCOL_N AS STRING)
+    WHEN '0' THEN 'Analfabeto'
+    WHEN '1' THEN '1ª a 4ª série incompleta do EF'
+    WHEN '2' THEN '4ª série completa do EF'
+    WHEN '3' THEN '5ª a 8ª série incompleta do EF'
+    WHEN '4' THEN 'Ensino fundamental completo'
+    WHEN '5' THEN 'Ensino médio incompleto'
+    WHEN '6' THEN 'Ensino médio completo'
+    WHEN '7' THEN 'Educação superior incompleta'
+    WHEN '8' THEN 'Educação superior completa'
+    WHEN '9' THEN 'Ignorado'
+    WHEN '10' THEN 'Não se aplica'
+    ELSE 'Não preenchido' 
+  END AS escolaridade,
 
 -- tratamento local da lesao
 
@@ -87,6 +120,103 @@ CASE
     WHEN TP_ACIDENT = 9 THEN 'Ignorado'
     ELSE 'Não informado'
 END AS tipo_acidente,
+
+--- tratamento tempo de atendimento
+
+  CASE CAST(ANT_TEMPO_ AS STRING)
+    WHEN '1' THEN '0 a 1 hora'
+    WHEN '2' THEN '1 a 3 horas'
+    WHEN '3' THEN '3 a 6 horas'
+    WHEN '4' THEN '6 a 12 horas'
+    WHEN '5' THEN '12 a 24 horas'
+    WHEN '6' THEN 'Mais de 24 horas'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido'
+  END AS tempo_atendimento,
+
+--- tratamento manifestações locais
+
+CASE CAST(MCLI_LOCAL AS STRING)
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido' 
+  END AS manifestacao_local,
+
+--- tratamento dor local
+
+CASE CAST(CLI_DOR AS STRING)
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido' 
+  END AS dor_local,
+
+--- tratamento soroterapia
+
+CASE CAST(CON_SOROTE AS STRING)
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido'
+  END AS soroterapia,
+
+--- tratamento tipo de animal serpente
+
+  CASE CAST(ANI_SERPEN AS STRING)
+    WHEN '1' THEN 'Botrópico (Jararaca)'
+    WHEN '2' THEN 'Crotálico (Cascavel)'
+    WHEN '3' THEN 'Elapídico (Coral verdadeira)'
+    WHEN '4' THEN 'Laquético (Surucucu)'
+    WHEN '5' THEN 'Não peçonhenta'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não se aplica / Não preenchido' 
+  END AS tipo_serpente,
+
+--- tratamento tipo animal aranha
+
+  CASE CAST(ANI_ARANHA AS STRING)
+    WHEN '1' THEN 'Foneutrismo (Armadeira)'
+    WHEN '2' THEN 'Loxoscelismo (Aranha-marrom)'
+    WHEN '3' THEN 'Latrodectismo (Viúva-negra)'
+    WHEN '4' THEN 'Outras'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não se aplica / Não preenchido'
+  END AS tipo_aranha,
+
+
+--- tratamento tipo animal lagarta
+
+  CASE CAST(ANI_LAGART AS STRING)
+    WHEN '1' THEN 'Lonomia'
+    WHEN '2' THEN 'Outras'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não se aplica / Não preenchido'
+  END AS tipo_lagarta,
+
+
+--- tratamento manifestações sistêmicas
+
+CASE CAST(MCLI_SIST AS STRING)
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido' -- Cobre os casos nulos
+  END AS manifestacao_sistemica,
+
+
+--- tratamento evolução do caso
+
+CASE CAST(EVOLUCAO AS STRING)
+    WHEN '1' THEN 'Cura'
+    WHEN '2' THEN 'Óbito pelo agravo' -- Morte causada diretamente pelo veneno/complicações
+    WHEN '3' THEN 'Óbito por outras causas' -- Morte não relacionada ao acidente
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não preenchido' -- Tratamento para null
+  END AS evolucao
+
+
+--- referencial da tabela
 
 FROM 
    ${ref("animaispeconhentos_alagoinhas_2026_silver")}
