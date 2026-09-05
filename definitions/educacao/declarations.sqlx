@@ -1,0 +1,7 @@
+-- Arquivo: definitions/declarations.sqlx
+config {
+    type: "declaration",
+    schema: "dados_alagoinhas_ideb",
+    name: "ideb_alagoinhas_silver",
+    description: "Declaração da view silver existente no BigQuery"
+}

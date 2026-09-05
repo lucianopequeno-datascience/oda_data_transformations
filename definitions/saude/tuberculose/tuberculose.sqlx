@@ -41,6 +41,8 @@ columns: {
   situacao_encerramento:"Descreve a situação do encerramento do caso do paciente",
   beneficio_governamental:"Descreve se o paciente possui ou não benefício do governo",
   escolaridade:"Descreve o nível de escolaridade do paciente",
+  pop_privacao_liberdade:"Descreve se o agravo é referente a um invíduo pertencente ao grupo população privada de liberdade",
+
 
 }
 
@@ -212,6 +214,54 @@ CASE
     WHEN BENEF_GOV = 9 THEN 'Ignorado'
     ELSE 'Não informado'
 END AS beneficio_governamental,
+
+--- tratamento população privada de liberdade
+
+CASE
+  WHEN POP_LIBER = 1 THEN 'Sim'
+  WHEN POP_LIBER = 2 THEN 'Não'
+  WHEN POP_LIBER = 0 THEN 'Não informado'
+  WHEN POP_LIBER = 9 THEN 'Ignorado'
+  WHEN POP_LIBER IS NULL THEN 'Não informado'
+  ELSE 'Não classificado'
+END AS pop_privacao_liberdade,
+
+--- tratamento agravo tabagismo
+
+CASE
+  WHEN AGRAVTABAC = 1 THEN 'Sim'
+  WHEN AGRAVTABAC = 2 THEN 'Não'
+  WHEN AGRAVTABAC = 9 THEN 'Ignorado'
+  WHEN AGRAVTABAC = 0 THEN 'Não informado'
+  WHEN AGRAVTABAC IS NULL THEN 'Não informado'
+  ELSE 'Código não identificado'
+END AS tabagismo,
+
+--- tratamento tipo de tratamento 
+
+CASE
+  WHEN TRATAMENTO = 1 THEN 'Esquema I'
+  WHEN TRATAMENTO = 2 THEN 'Esquema IR'
+  WHEN TRATAMENTO = 3 THEN 'Esquema II'
+  WHEN TRATAMENTO = 4 THEN 'Esquema III'
+  WHEN TRATAMENTO = 5 THEN 'Esquema para multirresistência'
+  WHEN TRATAMENTO = 6 THEN 'Outros esquemas'
+  ELSE 'Não informado'
+END AS tipo_tratamento,
+
+--- tratamento unidade notificadora
+
+CASE
+  WHEN TPUNINOT = 0 THEN 'Não informado'
+  WHEN TPUNINOT = 1 THEN 'Unidade de saúde'
+  WHEN TPUNINOT = 2 THEN 'Unidade hospitalar'
+  WHEN TPUNINOT = 4 THEN 'Unidade de referência'
+  WHEN TPUNINOT = 5 THEN 'Outro'
+  WHEN TPUNINOT = 7 THEN 'Outro'
+  WHEN TPUNINOT = 50 THEN 'Outro'
+  WHEN TPUNINOT IS NULL THEN 'Não informado'
+  ELSE 'Código não identificado'
+END AS tipo_unidade_notificadora
 
 --- referencial da tabela
 FROM ${ref("tuberculose_alagoinhas_historico_silver")}

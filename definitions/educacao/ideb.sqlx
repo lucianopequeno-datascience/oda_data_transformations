@@ -1,0 +1,9 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"ideb_alagoinhas_gold",
+    description:"Dados consolidados sobre o índice de desenvolvimento da educação básica para Alagoinhas",
+}
+
+SELECT * FROM
+${ref("ideb_alagoinhas_silver")}
