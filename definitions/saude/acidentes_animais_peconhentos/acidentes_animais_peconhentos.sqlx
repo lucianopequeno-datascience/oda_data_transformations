@@ -1,6 +1,5 @@
 config {
-
-    type: "view",
+    type: "table",
     schema: "dados_alagoinhas_gold",
     name:"animaispeconhentos_2026_alagoinhas_gold_v",
     description: "Base tratada de dados sobre acidentes com animais peçomhentos em Alagoinhas durante a série histporica",

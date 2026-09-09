@@ -1,0 +1,21 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"contador_animais_peconhentos_gold",
+    description:"Identifica a primeira e a última notificação de acidentes com animais peçonhentos no ano vigente",
+
+labels:{
+    autor:"luciano",
+    departamento:"saude",
+},
+
+columns:{
+  primeira_notificacao:"Descreve a primeira notificação de acidentes com animais peçonhentos para o ano vigente",
+  ultima_notificacao:"Descreve a última notificação de acidentes com animais peçonhentos para o ano vigente",
+}}
+
+SELECT 
+   MIN(data_notificacao) AS primeira_notificacao,
+   MAX(data_notificacao) AS ultima_notificacao
+
+FROM   ${ref("animaispeconhentos_2026_alagoinhas_gold_v")}
