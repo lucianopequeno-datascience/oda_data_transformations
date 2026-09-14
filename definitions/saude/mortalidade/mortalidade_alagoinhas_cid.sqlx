@@ -1,0 +1,24 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "mortalidade_cid10_gold",
+  description: "Base de mortalidade de Alagoinhas enriquecida com classificação CID-10",
+
+  labels: {
+    autor: "luciano",
+    departamento: "saude"
+  }
+}
+
+SELECT
+  m.*,
+  c.descricao_subcategoria,
+  c.categoria,
+  c.descricao_categoria,
+  c.capitulo,
+  c.descricao_capitulo
+
+FROM ${ref("mortalidade_alagoinhas_gold")} AS m
+
+LEFT JOIN ${ref("cid10")} AS c
+  ON m.causa_obito = c.subcategoria

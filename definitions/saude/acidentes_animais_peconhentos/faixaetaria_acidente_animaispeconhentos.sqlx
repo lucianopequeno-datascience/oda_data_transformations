@@ -1,0 +1,21 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"faixaetaria_acidente_animaispeconhentos",
+    description:"Descreve a faixa etária do paciente"
+}
+
+SELECT * REPLACE(
+
+CASE
+  WHEN idade_em_anos <= 12 THEN 'Criança'
+  WHEN idade_em_anos <= 17 THEN 'Adolescente'
+  WHEN idade_em_anos <= 59 THEN 'Adulto'
+  WHEN idade_em_anos >= 60 THEN 'Idoso'
+  ELSE 'Não informado'
+END AS faixa_etaria)
+
+
+
+ FROM
+${ref("animaispeconhentos_2026_alagoinhas_gold_v")}

@@ -1,0 +1,4 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_silver",
+    name:"pam_teste"}

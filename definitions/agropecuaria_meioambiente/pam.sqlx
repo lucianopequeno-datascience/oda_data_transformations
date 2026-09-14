@@ -1,0 +1,8 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_gold",
+    name:"pam_alagoinhas_gold",
+    description:"Dados históricos sobre produção agrícula municipal durante série histórica especificada"
+}
+
+SELECT * FROM ${ref("pam_teste")}

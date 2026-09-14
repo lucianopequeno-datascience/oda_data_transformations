@@ -2,19 +2,34 @@ config {
   type: "view",
   schema: "dados_alagoinhas_gold",
   name: "mortalidade_alagoinhas_gold",
-  description: "Mantém a base de dados sobre mortalidade em Alagoinhas"
+  description: "Mantém a base de dados sobre mortalidade em Alagoinhas",
+
+labels: {
+  autor:"luciano",
+  departamento:"saude"
+},
+
+columns: {
+  tipo_obito:"Descreve se o óbito foi fetal ou não",
+  data_obito:"Descreve a data do óbito",
+  hora_obito:"Descreve a hora do óbito",
+  idade_anos:"Descreve a idade da vítima do ónbito"
+}
 }
 
+
 SELECT 
+  HORAOBITO AS hora_obito,
+  PARSE_DATE('%d%m%Y', LPAD(CAST(DTOBITO AS STRING), 8, '0')) AS data_obito,
+  CAUSABAS AS causa_obito,
+
+-- tratamento tipo de obito
   CASE
     WHEN CAST(TIPOBITO AS STRING) = '1' THEN 'Óbito fetal'
     WHEN CAST(TIPOBITO AS STRING) = '2' THEN 'Óbito não fetal'
   END AS tipo_obito,
 
-  PARSE_DATE('%d%m%Y', LPAD(CAST(DTOBITO AS STRING), 8, '0')) AS data_obito,
-
-  HORAOBITO AS hora_obito,
-  `NATURAL` AS naturalidade,
+-- tratamento data de óbito
 
   CASE
     WHEN IDADE >= 400 AND IDADE < 500 THEN IDADE - 400
@@ -23,15 +38,89 @@ SELECT
     ELSE NULL
   END AS idade_anos,
 
+-- tratamenro sexo 
+
   CASE
     WHEN CAST(SEXO AS STRING) = '2' THEN 'Feminino'
     WHEN CAST(SEXO AS STRING) = '1' THEN 'Masculino'
     WHEN CAST(SEXO AS STRING) = '9' THEN 'Ignorado'
+    ELSE 'Não preenchido'
   END AS sexo,
 
-  RACACOR AS raca,
+-- tratamento raça cor
 
-  ESTCIV AS estado_civil,
-  ESC AS escolaridade
+CASE
+  WHEN RACACOR = 1 THEN 'Branca'
+  WHEN RACACOR = 2 THEN 'Preta'
+  WHEN RACACOR = 3 THEN 'Amarela'
+  WHEN RACACOR = 4 THEN 'Parda'
+  WHEN RACACOR = 5 THEN 'Indígena'
+  ELSE 'Ignorado'
+END AS raca_cor,
+
+-- tratamento estado civil
+
+CASE
+  WHEN ESTCIV = 1 THEN 'Solteiro(a)'
+  WHEN ESTCIV = 2 THEN 'Casado(a)'
+  WHEN ESTCIV = 3 THEN 'Viúvo(a)'
+  WHEN ESTCIV = 4 THEN 'Separado(a)'
+  WHEN ESTCIV = 5 THEN 'Consensual'
+  WHEN ESTCIV = 9 THEN 'Ignorado'
+  ELSE 'Não preenchido'
+END AS estado_civil,
+
+-- tratamento escolaridade
+
+CASE
+  WHEN ESC = 1 THEN 'Sem escolaridade'
+  WHEN ESC = 2 THEN 'Ensino fundamental incompleto'
+  WHEN ESC = 3 THEN 'Ensino fundamental completo'
+  WHEN ESC = 4 THEN 'Ensino médio completo'
+  WHEN ESC = 5 THEN 'Ensino superior completo'
+  WHEN ESC = 9 THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS escolaridade,
+
+-- tratamento local do obito #######
+
+CASE
+  WHEN LOCOCOR = 1 THEN 'Hospital'
+  WHEN LOCOCOR = 2 THEN 'Outro estabelecimento de saúde'
+  WHEN LOCOCOR = 3 THEN 'Domicílio'
+  WHEN LOCOCOR = 4 THEN 'Via pública'
+  WHEN LOCOCOR = 5 THEN 'Outros'
+  WHEN LOCOCOR = 9 THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS local_ocorrencia,
+
+-- tratamento situação gestacional
+
+CASE
+  WHEN GESTACAO = 1 THEN 'Menos de 22 semanas'
+  WHEN GESTACAO = 2 THEN '22 a 27 semanas'
+  WHEN GESTACAO = 3 THEN '28 a 31 semanas'
+  WHEN GESTACAO = 4 THEN '32 a 36 semanas'
+  WHEN GESTACAO = 5 THEN '37 a 41 semanas'
+  WHEN GESTACAO = 6 THEN '42 semanas ou mais'
+  WHEN GESTACAO = 9 THEN 'Ignorado/Não se aplica'
+  ELSE 'Não informado/Não se aplica'
+END AS idade_gestacional,
+
+-- tratamento morte obstetrica
+
+CASE
+  WHEN TPMORTEOCO = 1 THEN 'Morte obstétrica direta'
+  WHEN TPMORTEOCO = 2 THEN 'Morte obstétrica indireta'
+  WHEN TPMORTEOCO = 3 THEN 'Morte obstétrica não especificada'
+  WHEN TPMORTEOCO = 4 THEN 'Não ocorreu morte materna'
+  WHEN TPMORTEOCO = 5 THEN 'Não informado'
+  WHEN TPMORTEOCO = 8 THEN 'Não se aplica'
+  WHEN TPMORTEOCO = 9 THEN 'Ignorado'
+  ELSE 'Não preenchido'
+END AS tipo_morte_obstetrica,
+
+
+
 FROM ${ref("mortalidade_alagoinhas_silver")}
 

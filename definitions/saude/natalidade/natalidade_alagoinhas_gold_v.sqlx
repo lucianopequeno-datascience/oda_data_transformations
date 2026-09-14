@@ -71,6 +71,16 @@ SELECT
 
 --tratamento escolaridade
 
+CASE 
+        WHEN escolaridade_2010_mae = 0 THEN 'Sem escolaridade'
+        WHEN escolaridade_2010_mae = 1 THEN 'Ensino Fundamental I (1ª a 4ª série)'
+        WHEN escolaridade_2010_mae = 2 THEN 'Ensino Fundamental II (5ª a 8ª série)'
+        WHEN escolaridade_2010_mae = 3 THEN 'Ensino Médio'
+        WHEN escolaridade_2010_mae = 4 THEN 'Superior Incompleto'
+        WHEN escolaridade_2010_mae = 5 THEN 'Superior Completo'
+        WHEN escolaridade_2010_mae = 9 OR escolaridade_2010_mae IS NULL THEN 'Ignorado'
+        ELSE 'Não categorizado'
+    END AS desc_escolaridade_mae,
 
 --referencial da base silver
 FROM  ${ref("natalidade_alagoinhas_silver")}

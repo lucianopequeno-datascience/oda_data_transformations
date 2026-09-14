@@ -1,4 +1,3 @@
--- Arquivo: definitions/declarations.sqlx
 config {
     type: "declaration",
     schema: "dados_alagoinhas_ideb",
