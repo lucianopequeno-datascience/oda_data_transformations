@@ -1,0 +1,44 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "acidentedetrabalho_alagoinhas_gold_profissao_v",
+  description: "Dados consolidados de acidentes de trabalho de Alagoinhas/BA com classificação da ocupação e seus sinônimos segundo a CBO 2002",
+
+  labels: {
+    autor: "luciano",
+    departamento: "saude"
+  }
+}
+
+
+WITH cbo AS (
+
+  SELECT
+    CAST(cbo_2002 AS STRING) AS cbo_2002,
+
+    STRING_AGG(
+      DISTINCT NULLIF(TRIM(sinonimo), ''),
+      ' | '
+      ORDER BY NULLIF(TRIM(sinonimo), '')
+    ) AS sinonimo
+
+  FROM ${ref("ext_cbo_sinonimo")}
+
+  WHERE cbo_2002 IS NOT NULL
+
+  GROUP BY
+    CAST(cbo_2002 AS STRING)
+
+)
+
+
+SELECT
+  g.*,
+
+  cbo.sinonimo AS profissao_sinonimo
+
+FROM ${ref("acidentedetrabalho_alagoinhas_gold_v")} AS g
+
+LEFT JOIN cbo
+
+  ON CAST(g.ocupacao AS STRING) = cbo.cbo_2002

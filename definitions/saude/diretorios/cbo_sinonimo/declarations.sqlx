@@ -1,0 +1,5 @@
+config {
+    type:"declaration",
+    schema:"dados_alagoinhas_silver",
+    name:"ext_cbo_sinonimo"
+}

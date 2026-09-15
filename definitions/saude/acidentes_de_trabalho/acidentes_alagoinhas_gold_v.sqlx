@@ -54,7 +54,7 @@ SELECT
   SEM_ACID AS semana_acidente,
   ANO_NASC AS ano_nasc,
   HORA_ACID AS hora_acidente,
-
+  ID_OCUPA_N AS ocupacao,
 
 -- coluna para turno
 
