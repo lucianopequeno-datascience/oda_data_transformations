@@ -1,0 +1,339 @@
+config {
+  type: "table",
+  schema: "dados_alagoinhas_gold",
+  name: "violencia_alagoinhas_features",
+  description: "Feature table mensal para análise e previsão de notificações de violência contra mulheres em Alagoinhas.",
+  labels: {
+    autor: "luciano",
+    departamento: "saude",
+    finalidade: "machine_learning",
+    tipo_modelo: "series_temporais"
+  }
+}
+
+WITH base AS (
+
+  SELECT
+    DATE_TRUNC(data_notificacao, MONTH) AS mes,
+    sexo,
+    lesao_autoprovocada,
+    ocorreu_outras_vezes,
+    idade,
+    local_ocorrencia_descricao,
+    raca_cor
+
+  FROM ${ref("violencia_alagoinhas_gold_v")}
+
+),
+
+/* ============================================================
+   1. AGREGAÇÃO MENSAL DOS DADOS EXISTENTES
+   ============================================================ */
+
+mensal AS (
+
+  SELECT
+
+    mes,
+
+    COUNT(*) AS notificacoes_total,
+
+    COUNTIF(sexo = "Feminino") AS notificacoes_mulheres,
+
+    COUNTIF(sexo = "Masculino") AS notificacoes_homens,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND lesao_autoprovocada = "Sim"
+    ) AS mulheres_lesao_autoprovocada,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND ocorreu_outras_vezes = "Sim"
+    ) AS mulheres_violencia_recorrente,
+
+    AVG(
+      CASE
+        WHEN sexo = "Feminino"
+        THEN idade
+      END
+    ) AS idade_media_mulheres,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade < 18
+    ) AS mulheres_menores_18,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade BETWEEN 18 AND 29
+    ) AS mulheres_18_29,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade BETWEEN 30 AND 44
+    ) AS mulheres_30_44,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade BETWEEN 45 AND 59
+    ) AS mulheres_45_59,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade >= 60
+    ) AS mulheres_60_mais,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND local_ocorrencia_descricao = "Residência"
+    ) AS mulheres_residencia,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND local_ocorrencia_descricao = "Via Pública"
+    ) AS mulheres_via_publica,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND local_ocorrencia_descricao = "Escola"
+    ) AS mulheres_escola,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND local_ocorrencia_descricao = "Comércio/Serviços"
+    ) AS mulheres_comercio_servicos,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND raca_cor = "Branca"
+    ) AS mulheres_raca_branca,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND raca_cor = "Preta"
+    ) AS mulheres_raca_preta,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND raca_cor = "Parda"
+    ) AS mulheres_raca_parda,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND raca_cor = "Indígena"
+    ) AS mulheres_raca_indigena,
+
+    COUNTIF(
+      sexo = "Feminino"
+      AND idade IS NULL
+    ) AS mulheres_sem_informacao_idade
+
+  FROM base
+
+  GROUP BY mes
+
+),
+
+/* ============================================================
+   2. CALENDÁRIO MENSAL COMPLETO
+   ============================================================ */
+
+calendario AS (
+
+  SELECT
+    mes
+
+  FROM UNNEST(
+    GENERATE_DATE_ARRAY(
+      (SELECT MIN(mes) FROM mensal),
+      (SELECT MAX(mes) FROM mensal),
+      INTERVAL 1 MONTH
+    )
+  ) AS mes
+
+),
+
+/* ============================================================
+   3. COMPLETANDO OS MESES AUSENTES
+   ============================================================ */
+
+serie_completa AS (
+
+  SELECT
+
+    calendario.mes,
+
+    COALESCE(mensal.notificacoes_total, 0)
+      AS notificacoes_total,
+
+    COALESCE(mensal.notificacoes_mulheres, 0)
+      AS notificacoes_mulheres,
+
+    COALESCE(mensal.notificacoes_homens, 0)
+      AS notificacoes_homens,
+
+    COALESCE(mensal.mulheres_lesao_autoprovocada, 0)
+      AS mulheres_lesao_autoprovocada,
+
+    COALESCE(mensal.mulheres_violencia_recorrente, 0)
+      AS mulheres_violencia_recorrente,
+
+    mensal.idade_media_mulheres,
+
+    COALESCE(mensal.mulheres_menores_18, 0)
+      AS mulheres_menores_18,
+
+    COALESCE(mensal.mulheres_18_29, 0)
+      AS mulheres_18_29,
+
+    COALESCE(mensal.mulheres_30_44, 0)
+      AS mulheres_30_44,
+
+    COALESCE(mensal.mulheres_45_59, 0)
+      AS mulheres_45_59,
+
+    COALESCE(mensal.mulheres_60_mais, 0)
+      AS mulheres_60_mais,
+
+    COALESCE(mensal.mulheres_residencia, 0)
+      AS mulheres_residencia,
+
+    COALESCE(mensal.mulheres_via_publica, 0)
+      AS mulheres_via_publica,
+
+    COALESCE(mensal.mulheres_escola, 0)
+      AS mulheres_escola,
+
+    COALESCE(mensal.mulheres_comercio_servicos, 0)
+      AS mulheres_comercio_servicos,
+
+    COALESCE(mensal.mulheres_raca_branca, 0)
+      AS mulheres_raca_branca,
+
+    COALESCE(mensal.mulheres_raca_preta, 0)
+      AS mulheres_raca_preta,
+
+    COALESCE(mensal.mulheres_raca_parda, 0)
+      AS mulheres_raca_parda,
+
+    COALESCE(mensal.mulheres_raca_indigena, 0)
+      AS mulheres_raca_indigena,
+
+    COALESCE(mensal.mulheres_sem_informacao_idade, 0)
+      AS mulheres_sem_informacao_idade
+
+  FROM calendario
+
+  LEFT JOIN mensal
+    USING (mes)
+
+),
+
+/* ============================================================
+   4. FEATURES TEMPORAIS
+   ============================================================ */
+
+features_temporais AS (
+
+  SELECT
+
+    *,
+
+    EXTRACT(YEAR FROM mes) AS ano,
+
+    EXTRACT(MONTH FROM mes) AS mes_numero,
+
+    EXTRACT(QUARTER FROM mes) AS trimestre,
+
+    /* LAGS */
+
+    LAG(notificacoes_mulheres, 1)
+      OVER (ORDER BY mes)
+      AS lag_1_mes,
+
+    LAG(notificacoes_mulheres, 3)
+      OVER (ORDER BY mes)
+      AS lag_3_meses,
+
+    LAG(notificacoes_mulheres, 6)
+      OVER (ORDER BY mes)
+      AS lag_6_meses,
+
+    LAG(notificacoes_mulheres, 12)
+      OVER (ORDER BY mes)
+      AS lag_12_meses,
+
+    /* MÉDIAS MÓVEIS */
+
+    AVG(notificacoes_mulheres)
+      OVER (
+        ORDER BY mes
+        ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING
+      ) AS media_movel_3_meses,
+
+    AVG(notificacoes_mulheres)
+      OVER (
+        ORDER BY mes
+        ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+      ) AS media_movel_6_meses,
+
+    AVG(notificacoes_mulheres)
+      OVER (
+        ORDER BY mes
+        ROWS BETWEEN 12 PRECEDING AND 1 PRECEDING
+      ) AS media_movel_12_meses
+
+  FROM serie_completa
+
+)
+
+SELECT
+
+  mes,
+  ano,
+  mes_numero,
+  trimestre,
+
+  notificacoes_total,
+  notificacoes_mulheres,
+  notificacoes_homens,
+
+  SAFE_DIVIDE(
+    notificacoes_mulheres,
+    notificacoes_total
+  ) AS proporcao_mulheres,
+
+  mulheres_lesao_autoprovocada,
+  mulheres_violencia_recorrente,
+
+  idade_media_mulheres,
+
+  mulheres_menores_18,
+  mulheres_18_29,
+  mulheres_30_44,
+  mulheres_45_59,
+  mulheres_60_mais,
+
+  mulheres_residencia,
+  mulheres_via_publica,
+  mulheres_escola,
+  mulheres_comercio_servicos,
+
+  mulheres_raca_branca,
+  mulheres_raca_preta,
+  mulheres_raca_parda,
+  mulheres_raca_indigena,
+
+  mulheres_sem_informacao_idade,
+
+  lag_1_mes,
+  lag_3_meses,
+  lag_6_meses,
+  lag_12_meses,
+
+  media_movel_3_meses,
+  media_movel_6_meses,
+  media_movel_12_meses
+
+FROM features_temporais

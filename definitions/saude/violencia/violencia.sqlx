@@ -81,21 +81,7 @@ CASE
     ELSE 'Outro/Fora do padrão' 
   END AS situacao_conjugal,
 
--- transformação local de ocorrência
 
-CASE
-    WHEN CAST(LOCAL_OCOR AS STRING) = '1' THEN 'Hospital'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '2' THEN 'Outro estabelecimento de saúde'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '3' THEN 'Domicílio'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '4' THEN 'Via pública'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '5' THEN 'Outros'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '6' THEN 'Aldeia Indígena'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '7' THEN 'Comércio/Serviços'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '8' THEN 'Indústria/Construção'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '9' THEN 'Ignorado'
-    WHEN CAST(LOCAL_OCOR AS STRING) = '99' THEN 'Ignorado' 
-    ELSE 'Não Informado' 
-  END AS local_ocorrencia_desc,
 
 -- transformação de recorrência
 
