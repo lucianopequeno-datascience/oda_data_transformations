@@ -3,12 +3,185 @@ config {
     schema:"dados_alagoinhas_gold",
     name:"hanseniase_alagoinhas_gold",
     description:"Dados tratados sobre casos de hanseniase em Alagoinhas durante a série histórica vigente",
-
-labels:{
-    autor:"luciano",
-    departamento:"saude"
-}
 }
 
-SELECT * FROM
+SELECT 
+  
+  NU_LESOES AS numero_lesoes_cultaneas,
+  SAFE.PARSE_DATE('%Y%m%d', NULLIF(TRIM(DT_NOTI_AT), '')) AS data_notificacao,
+  SAFE.PARSE_DATE('%Y%m%d', NULLIF(TRIM(DTINICTRAT), '')) AS data_inicio_tratamento,
+  SAFE_CAST(NULLIF(TRIM(CONTREG), '') AS INT64) AS quantidade_contatos_registrados,
+  ID_OCUPA_N AS ocupacao,
+
+
+--- tratamento nervos afetados
+CASE 
+    WHEN NERVOSAFET IS NULL THEN "Não especificado"
+    ELSE NERVOSAFET
+    END AS nervos_afetados,
+    
+--- tratamento idade
+CASE
+  WHEN SAFE_CAST(NU_IDADE_N AS INT64) >= 4000
+       AND SAFE_CAST(NU_IDADE_N AS INT64) < 5000
+    THEN SAFE_CAST(NU_IDADE_N AS INT64) - 4000
+
+  WHEN SAFE_CAST(NU_IDADE_N AS INT64) < 4000
+    THEN 0
+
+  ELSE NULL
+END AS idade_em_anos,
+
+--- tratamento sexo
+CASE
+  WHEN CS_SEXO = 'F' THEN 'Feminino'
+  WHEN CS_SEXO = 'M' THEN 'Masculino'
+  ELSE 'Não informado'
+END AS sexo,
+
+--- tratamento raça cor
+CASE
+  WHEN CS_RACA = '1' THEN 'Branca'
+  WHEN CS_RACA = '2' THEN 'Preta'
+  WHEN CS_RACA = '3' THEN 'Amarela'
+  WHEN CS_RACA = '4' THEN 'Parda'
+  WHEN CS_RACA = '5' THEN 'Indígena'
+  WHEN CS_RACA = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS raca_cor,
+
+---tratamento escolaridade
+CASE
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 0
+    THEN 'Analfabeto'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 1
+    THEN '1ª a 4ª série incompleta do Ensino Fundamental'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 2
+    THEN '4ª série completa do Ensino Fundamental'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 3
+    THEN '5ª a 8ª série incompleta do Ensino Fundamental'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 4
+    THEN 'Ensino Fundamental completo'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 5
+    THEN 'Ensino Médio incompleto'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 6
+    THEN 'Ensino Médio completo'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 7
+    THEN 'Educação Superior incompleta'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 8
+    THEN 'Educação Superior completa'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 9
+    THEN 'Ignorado'
+
+  WHEN SAFE_CAST(NULLIF(TRIM(CS_ESCOL_N), '') AS INT64) = 10
+    THEN 'Não se aplica'
+
+  ELSE 'Não informado'
+END AS escolaridade,
+
+
+
+--- tratamento para forma clínica da hanseníase
+CASE
+  WHEN FORMACLINI = '1' THEN 'Indeterminada'
+  WHEN FORMACLINI = '2' THEN 'Tuberculoide'
+  WHEN FORMACLINI = '3' THEN 'Dimorfa'
+  WHEN FORMACLINI = '4' THEN 'Virchowiana'
+  WHEN FORMACLINI = '5' THEN 'Não classificada'
+  WHEN FORMACLINI = '9' THEN 'Ignorado'
+  WHEN FORMACLINI = '0' THEN 'Ignorado/Não preenchido'
+  ELSE 'Não informado'
+END AS forma_clinica,
+
+--- tratamento classificação operacional da hanseníase
+CASE
+  WHEN CLASSOPERA = '1' THEN 'Paucibacilar (PB)'
+  WHEN CLASSOPERA = '2' THEN 'Multibacilar (MB)'
+  WHEN CLASSOPERA = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS classificacao_operacional,
+
+--- tratamento avaliação grau de incapacidade física
+CASE
+  WHEN AVALIA_N = '0' THEN 'Grau 0'
+  WHEN AVALIA_N = '1' THEN 'Grau 1'
+  WHEN AVALIA_N = '2' THEN 'Grau 2'
+  WHEN AVALIA_N = '3' THEN 'Não avaliado'
+  ELSE 'Não informado'
+END AS avaliacao_grau_incapacidade,
+
+
+--- tratamento modo de detecção de novo caso
+CASE
+  WHEN MODODETECT = '1' THEN 'Encaminhamento'
+  WHEN MODODETECT = '2' THEN 'Demanda espontânea'
+  WHEN MODODETECT = '3' THEN 'Exame de coletividade'
+  WHEN MODODETECT = '4' THEN 'Exame de contatos'
+  WHEN MODODETECT = '5' THEN 'Outros modos'
+  WHEN MODODETECT = '9' THEN 'Ignorado'
+  WHEN MODODETECT = '0' THEN 'Não se aplica'
+  ELSE 'Não informado'
+END AS modo_deteccao_caso_novo,
+
+--- tratamento modo de entrada
+CASE
+  WHEN MODOENTR = '1' THEN 'Caso novo'
+  WHEN MODOENTR = '2' THEN 'Transferência do mesmo município'
+  WHEN MODOENTR = '3' THEN 'Transferência de outro município'
+  WHEN MODOENTR = '4' THEN 'Transferência de outro estado'
+  WHEN MODOENTR = '5' THEN 'Transferência de outro país'
+  WHEN MODOENTR = '6' THEN 'Recidiva'
+  WHEN MODOENTR = '7' THEN 'Outros reingressos'
+  WHEN MODOENTR = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS modo_entrada,
+
+--- tratamento resultado baciloscopia
+CASE
+  WHEN BACILOSCOP = '0' THEN 'Não realizado'
+  WHEN BACILOSCOP = '1' THEN 'Positiva'
+  WHEN BACILOSCOP = '2' THEN 'Negativa'
+  WHEN BACILOSCOP = '3' THEN 'Não se aplica'
+  WHEN BACILOSCOP = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS resultado_baciloscopia,
+
+
+--- tratamento esquema terapêutico inicial
+CASE
+  WHEN SAFE_CAST(NULLIF(TRIM(ESQ_INI_N), '') AS INT64) = 1
+    THEN 'PQT/PB — 6 doses'
+  WHEN SAFE_CAST(NULLIF(TRIM(ESQ_INI_N), '') AS INT64) = 2
+    THEN 'PQT/MB — 12 doses'
+  WHEN SAFE_CAST(NULLIF(TRIM(ESQ_INI_N), '') AS INT64) = 3
+    THEN 'Outros esquemas substitutos'
+  WHEN SAFE_CAST(NULLIF(TRIM(ESQ_INI_N), '') AS INT64) = 9
+    THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS esquema_terapeutico_inicial,
+
+--- tratamento situação atual
+CASE
+  WHEN TPALTA_N = '1' THEN 'Cura'
+  WHEN TPALTA_N = '2' THEN 'Transferência para outro município'
+  WHEN TPALTA_N = '3' THEN 'Transferência para outro estado'
+  WHEN TPALTA_N = '4' THEN 'Transferência para outro país'
+  WHEN TPALTA_N = '5' THEN 'Óbito'
+  WHEN TPALTA_N = '6' THEN 'Abandono'
+  WHEN TPALTA_N = '7' THEN 'Erro diagnóstico'
+  WHEN TPALTA_N = '8' THEN 'Transferência para outra unidade de saúde'
+  WHEN TPALTA_N = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS tipo_alta
+
+FROM
 ${ref("hanseniase_alagoinhas_silver")}
