@@ -1,0 +1,6 @@
+config {
+    type:"declaration",
+    schema:"dados_alagoinhas_silver",
+    name:"hanseniase_alagoinhas_silver",
+    description:"Declaração de base de dados silver sobre casos de hanseniase em Alagoinhas durante a série histórica vigente"
+}

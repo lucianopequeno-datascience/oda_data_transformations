@@ -1,0 +1,14 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_gold",
+    name:"hanseniase_alagoinhas_gold",
+    description:"Dados tratados sobre casos de hanseniase em Alagoinhas durante a série histórica vigente",
+
+labels:{
+    autor:"luciano",
+    departamento:"saude"
+}
+}
+
+SELECT * FROM
+${ref("hanseniase_alagoinhas_silver")}
