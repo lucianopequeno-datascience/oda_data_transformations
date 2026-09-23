@@ -1,0 +1,13 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"contador_hanseniase_alagoinhas_gold_v",
+    description:"Realiza a contagagem da primeira e última notificação da base a partir dos dados tratados"
+}
+
+SELECT
+   MAX(data_notificacao) AS ultima_notificacao,
+   MIN(data_notificacao) AS primeira_notificacao,
+
+   from 
+   ${ref("hanseniase_alagoinhas_gold")}
