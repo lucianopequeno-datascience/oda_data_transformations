@@ -1,6 +1,6 @@
 config {
     type:"declaration",
     schema:"dados_alagoinhas_silver",
-    name:"transtornos_mentais_trabalho_alagoinhas_silver",
+    name:"transtornos_trabalho_silver",
     description:"Declaração para base de dados silver sobre Transtornos Mentais Relacionados ao Trabalho em Alagoinhas durante série histórica vigente"
 }

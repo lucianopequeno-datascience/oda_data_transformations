@@ -2,9 +2,9 @@ config {
     type:"table",
     schema:"dados_alagoinhas_gold",
     name:"transtornos_trabalho_alagoinhas_gold",
-    description:"Dados tratados sobre transtornos relacionados ao trabalh oem Alagoinhas durante a série histórica vigente"
+    description:"Dados tratados sobre transtornos relacionados ao trabalho oem Alagoinhas durante a série histórica vigente"
 }
 
 SELECT *
 FROM
-${ref("transtornos_mentais_trabalho_alagoinhas_silver")}
+${ref("transtornos_trabalho_silver")}
