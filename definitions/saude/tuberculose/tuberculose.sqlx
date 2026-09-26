@@ -2,11 +2,6 @@ config {
   type: "table",
   schema:"dados_alagoinhas_gold",
   name:"tuberculose_alagoinhas_historico_v",
-
-
-  bigquery: {
-    partitionBy: "ano"
-  },
  
 labels: {
   autor:"luciano",
