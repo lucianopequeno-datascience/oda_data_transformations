@@ -5,4 +5,23 @@ config {
     description:"Dados históricos sobre produção agrícula municipal durante série histórica especificada"
 }
 
-SELECT * FROM ${ref("pam_teste")}
+SELECT 
+
+NC AS dimensao_geografica,
+NN AS dimensao_municipio,
+MC AS codigo_medida,
+MN AS unidade_medida,
+SAFE_CAST(valor AS FLOAT64) AS valor,
+codigo_municipio,
+municipio,
+variavel,
+SAFE_CAST(produto AS INT64) AS ano,
+unidade,
+
+
+PARSE_DATE(
+  '%Y',
+  produto
+) AS data
+
+FROM ${ref("pam_teste")}

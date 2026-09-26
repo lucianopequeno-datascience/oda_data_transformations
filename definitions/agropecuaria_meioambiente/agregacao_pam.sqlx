@@ -1,0 +1,57 @@
+config {
+  type: "view",
+  schema: "dados_alagoinhas_gold",
+  name: "agregacao_pam"
+}
+
+SELECT
+  dimensao_geografica,
+  dimensao_municipio,
+  codigo_municipio,
+  municipio,
+  ano,
+  PARSE_DATE('%Y', CAST(ano AS STRING)) AS data,
+
+  MAX(unidade) AS unidade,
+
+  SUM(
+    CASE
+      WHEN variavel = "Área plantada ou destinada à colheita"
+      THEN valor
+      ELSE 0
+    END
+  ) AS area_plantada,
+
+  SUM(
+    CASE
+      WHEN variavel = "Quantidade produzida"
+      THEN valor
+      ELSE 0
+    END
+  ) AS quantidade_produzida,
+
+  SUM(
+    CASE
+      WHEN variavel = "Valor da produção"
+      THEN valor
+      ELSE 0
+    END
+  ) AS valor_producao
+
+FROM ${ref("pam_alagoinhas_gold")}
+
+WHERE variavel IN (
+  "Área plantada ou destinada à colheita",
+  "Quantidade produzida",
+  "Valor da produção"
+)
+
+GROUP BY
+  dimensao_geografica,
+  dimensao_municipio,
+  codigo_municipio,
+  municipio,
+  ano
+
+ORDER BY
+  ano
