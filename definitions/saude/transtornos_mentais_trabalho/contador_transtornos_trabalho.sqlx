@@ -1,0 +1,12 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"contador_transtornos_trabalho_gold_v",
+    description:"Descreve a primeira e última notificação da base de dados"
+}
+
+SELECT 
+   MIN(data_notificacao) AS primeira_notificacao,
+   MAX(data_notificacao) AS ultima_notificacao
+
+FROM ${ref("transtornos_trabalho_alagoinhas_gold")}

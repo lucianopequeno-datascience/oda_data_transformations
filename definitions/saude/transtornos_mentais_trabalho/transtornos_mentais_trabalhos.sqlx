@@ -5,6 +5,52 @@ config {
     description:"Dados tratados sobre transtornos relacionados ao trabalho oem Alagoinhas durante a série histórica vigente"
 }
 
-SELECT *
+SELECT 
+
+ SAFE.PARSE_DATE('%Y%m%d', NULLIF(TRIM(DT_NOTIFIC), '')) AS data_notificacao,
+ NU_ANO AS ano,
+
+--- tratamento sexo
+
+CASE 
+  WHEN CS_SEXO = "F" THEN "Feminino"
+  WHEN CS_SEXO = "M" THEN "Masculino"
+ELSE "Ignorando"
+END AS sexo,
+
+--- tratamento idade
+
+CASE
+    WHEN SAFE_CAST(NU_IDADE_N AS INT64) BETWEEN 4000 AND 4999
+        THEN SAFE_CAST(NU_IDADE_N AS INT64) - 4000
+    WHEN SAFE_CAST(NU_IDADE_N AS INT64) BETWEEN 5000 AND 5999
+        THEN SAFE_CAST(NU_IDADE_N AS INT64) - 4900
+    WHEN SAFE_CAST(NU_IDADE_N AS INT64) < 4000
+        THEN 0
+    ELSE NULL
+END AS idade_em_anos,
+
+--- tratamento raça cor
+
+CASE SAFE_CAST(CS_RACA AS INT64)
+    WHEN 1 THEN 'Branca'
+    WHEN 2 THEN 'Preta'
+    WHEN 3 THEN 'Amarela'
+    WHEN 4 THEN 'Parda'
+    WHEN 5 THEN 'Indígena'
+    WHEN 9 THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS raca_cor,
+
+--- tratamento situação empregaticia
+
+CASE SIT_TRAB
+    WHEN '01' THEN 'Empregado registrado com carteira assinada'
+    WHEN '02' THEN 'Empregado não registrado'
+    WHEN '03' THEN 'Autônomo/conta própria'
+    WHEN '04' THEN 'Servidor público estatutário'
+    ELSE 'Não informado'
+END AS situacao_trabalho,
+
 FROM
 ${ref("transtornos_trabalho_silver")}
