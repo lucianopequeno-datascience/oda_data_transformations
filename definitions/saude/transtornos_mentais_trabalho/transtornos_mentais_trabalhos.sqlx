@@ -7,6 +7,14 @@ config {
 
 SELECT 
 
+   TP_NOT AS tipo_notificacao,
+   ID_AGRAVO AS id_agravo,
+   SEM_NOT AS semana_notificacao,
+   ID_UNIDADE AS unidade_notificadora,
+   ANO_NASC AS ano_nascimento,
+   DIAG_ESP AS diagnostico_cid,
+   ID_OCUPA_N AS id_ocupacao,
+
  SAFE.PARSE_DATE('%Y%m%d', NULLIF(TRIM(DT_NOTIFIC), '')) AS data_notificacao,
  NU_ANO AS ano,
 
@@ -51,6 +59,56 @@ CASE SIT_TRAB
     WHEN '04' THEN 'Servidor público estatutário'
     ELSE 'Não informado'
 END AS situacao_trabalho,
+
+--- tratamento escolaridade
+
+CASE CS_ESCOL_N
+    WHEN '00' THEN 'Analfabeto'
+    WHEN '01' THEN '1ª a 4ª série incompleta do EF'
+    WHEN '02' THEN '4ª série completa do EF'
+    WHEN '03' THEN '5ª a 8ª série incompleta do EF'
+    WHEN '04' THEN 'Ensino fundamental completo'
+    WHEN '05' THEN 'Ensino médio incompleto'
+    WHEN '06' THEN 'Ensino médio completo'
+    WHEN '07' THEN 'Educação superior incompleta'
+    WHEN '08' THEN 'Educação superior completa'
+    WHEN '09' THEN 'Ignorado'
+    WHEN '10' THEN 'Não se aplica'
+    ELSE 'Não informado'
+END AS escolaridade,
+
+--- tratamento uso de drogas
+
+CASE DROGAS
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS uso_drogas,
+
+--- tratamento afastamento/desligamento do trabalho
+
+CASE AFAST_DESG
+    WHEN '1' THEN 'Sim'
+    WHEN '2' THEN 'Não'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado' -- Para tratar a linha 3 (nulos ou vazios)
+END AS afastamento_desligamento,
+
+--- tratamento evolução do caso
+
+CASE EVOLUCAO
+    WHEN '1' THEN 'Cura'
+    WHEN '2' THEN 'Cura não confirmada'
+    WHEN '3' THEN 'Incapacidade Temporária'
+    WHEN '4' THEN 'Incapacidade Permanente Parcial'
+    WHEN '5' THEN 'Incapacidade Permanente Total'
+    WHEN '6' THEN 'Óbito por doença relacionada ao trabalho'
+    WHEN '7' THEN 'Óbito por Outra Causa'
+    WHEN '8' THEN 'Outro'
+    WHEN '9' THEN 'Ignorado'
+    ELSE 'Não informado'
+END AS evolucao_caso,
 
 FROM
 ${ref("transtornos_trabalho_silver")}
