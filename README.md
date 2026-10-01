@@ -207,7 +207,4 @@ A última sigla define o tipo de tabela (external, view, etc.)
 <img width="1596" height="918" alt="image" src="https://github.com/user-attachments/assets/c7199599-5405-47b4-9324-233dae920a17" />
 
 
-<img width="1589" height="926" alt="image" src="https://github.com/user-attachments/assets/70ab98c3-241b-4451-8e0b-f2506b579593" />
-
-
-
+<img width="1860" height="951" alt="image" src="https://github.com/user-attachments/assets/34484e5d-a13d-4ca5-b1c4-f8c1fce983b1" />
