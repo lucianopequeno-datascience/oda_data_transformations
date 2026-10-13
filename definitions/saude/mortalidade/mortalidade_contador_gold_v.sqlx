@@ -1,0 +1,12 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"mortalidade_contador_gold_v",
+    description:"Descreve a primeira e última notificação dos dados analisados em questão"
+}
+
+SELECT 
+  MIN(data_obito) AS primeiro_obito,
+  MAX(data_obito) AS ultimo_obito
+    FROM 
+${ref("mortalidade_alagoinhas_gold")}

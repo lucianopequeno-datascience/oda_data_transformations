@@ -2,187 +2,71 @@ config {
   type: "table",
   schema: "dados_alagoinhas_gold",
   name: "natalidade_alagoinhas_gold_v",
-  description: "Informações sobre natalidade em Alagoinhas durante série temporal especificada"
+  description: "Dados de natalidade de Alagoinhas com aliases compatíveis com o relatório existente"
 }
 
 SELECT
+  SAFE_CAST(SUBSTR(TRIM(DTNASC), 1, 4) AS INT64) AS ano,
+  CAST(CODESTAB AS STRING) AS codigo_estabelecimento,
+  CAST(DTNASC AS STRING) AS data_nascimento,
+  CODANOMAL AS codigo_anomalia,
 
-  -- =========================================================
-  -- IDENTIFICAÇÃO / LOCALIZAÇÃO
-  -- =========================================================
-
-  CAST(contador AS STRING) AS contador,
-  CAST(ORIGEM AS STRING) AS origem,
-  CAST(CODESTAB AS STRING) AS codestab,
-  CAST(CODMUNNASC AS STRING) AS codmunnasc,
-  CAST(LOCNASC AS STRING) AS locnasc,
-  CAST(CODMUNRES AS STRING) AS codmunres,
-  CAST(CODMUNNATU AS STRING) AS codmunnatu,
-  CAST(CODUFNATU AS STRING) AS codufnatu,
-  CAST(CODPAISRES AS STRING) AS codpaisres,
-
-  -- =========================================================
-  -- MÃE
-  -- =========================================================
-
-  SAFE_CAST(IDADEMAE AS INT64) AS idade_mae,
-
-  CASE
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 1 THEN 'Solteira'
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 2 THEN 'Casada'
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 3 THEN 'Viúva'
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 4 THEN 'Separada/Divorciada'
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 5 THEN 'União Consensual'
-    WHEN SAFE_CAST(ESTCIVMAE AS INT64) = 9 THEN 'Ignorado'
-    ELSE 'Não Informado'
-  END AS estado_civil_mae,
-
-  CAST(ESCMAE AS STRING) AS escmae,
-  CAST(CODOCUPMAE AS STRING) AS codocupmae,
-
-  SAFE_CAST(QTDFILVIVO AS INT64) AS qtd_filhos_vivos,
-  SAFE_CAST(QTDFILMORT AS INT64) AS qtd_filhos_mortos,
-
-  CASE
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 0
-      THEN 'Sem escolaridade'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 1
-      THEN 'Ensino Fundamental I (1ª a 4ª série)'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 2
-      THEN 'Ensino Fundamental II (5ª a 8ª série)'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 3
-      THEN 'Ensino Médio'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 4
-      THEN 'Superior Incompleto'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 5
-      THEN 'Superior Completo'
-    WHEN SAFE_CAST(ESCMAE2010 AS INT64) = 9
-      OR ESCMAE2010 IS NULL
-      OR TRIM(ESCMAE2010) = ''
-      THEN 'Ignorado'
-    ELSE 'Não categorizado'
+  CASE SAFE_CAST(ESCMAE2010 AS INT64)
+    WHEN 1 THEN "Nenhuma"
+    WHEN 2 THEN "1 a 3 anos"
+    WHEN 3 THEN "4 a 7 anos"
+    WHEN 4 THEN "8 a 11 anos"
+    WHEN 5 THEN "12 anos ou mais"
+    WHEN 9 THEN "Ignorado"
+    ELSE "Não informado"
   END AS desc_escolaridade_mae,
 
-  CAST(SERIESCMAE AS STRING) AS serie_escolaridade_mae,
+  CASE SAFE_CAST(ESTCIVMAE AS INT64)
+    WHEN 1 THEN "Solteira"
+    WHEN 2 THEN "Casada"
+    WHEN 3 THEN "Viúva"
+    WHEN 4 THEN "Separada judicialmente"
+    WHEN 5 THEN "União consensual"
+    WHEN 9 THEN "Ignorado"
+    ELSE "Não informado"
+  END AS estado_civil_mae,
 
-  SAFE_CAST(QTDGESTANT AS INT64) AS qtd_gestacoes_anteriores,
-  SAFE_CAST(QTDPARTNOR AS INT64) AS qtd_partos_normais,
-  SAFE_CAST(QTDPARTCES AS INT64) AS qtd_partos_cesareos,
-
-  SAFE_CAST(IDADEPAI AS INT64) AS idade_pai,
-
-  CAST(DTNASCMAE AS STRING) AS data_nascimento_mae,
-  CAST(RACACORMAE AS STRING) AS raca_cor_mae,
-
-  -- =========================================================
-  -- NASCIMENTO
-  -- =========================================================
-
-  CAST(DTNASC AS STRING) AS data_nascimento,
-  CAST(HORANASC AS STRING) AS hora_nascimento,
-
-  CASE
-    WHEN UPPER(TRIM(SEXO)) IN ('1', 'M') THEN 'Masculino'
-    WHEN UPPER(TRIM(SEXO)) IN ('2', 'F') THEN 'Feminino'
-    WHEN TRIM(SEXO) = '0' THEN 'Ignorado'
-    ELSE 'Ignorado'
-  END AS sexo,
-
-  SAFE_CAST(APGAR1 AS INT64) AS apgar_1,
-  SAFE_CAST(APGAR5 AS INT64) AS apgar_5,
-
-  CASE
-    WHEN SAFE_CAST(RACACOR AS INT64) = 1 THEN 'Branca'
-    WHEN SAFE_CAST(RACACOR AS INT64) = 2 THEN 'Preta'
-    WHEN SAFE_CAST(RACACOR AS INT64) = 3 THEN 'Amarela'
-    WHEN SAFE_CAST(RACACOR AS INT64) = 4 THEN 'Parda'
-    WHEN SAFE_CAST(RACACOR AS INT64) = 5 THEN 'Indígena'
-    WHEN SAFE_CAST(RACACOR AS INT64) = 9 THEN 'Não Informado'
-    ELSE 'Não Informado'
-  END AS raca_cor,
-
-  SAFE_CAST(PESO AS INT64) AS peso,
-
-  -- =========================================================
-  -- ANOMALIAS
-  -- =========================================================
-
-  CASE
-    WHEN SAFE_CAST(IDANOMAL AS INT64) = 1 THEN 'Sim'
-    WHEN SAFE_CAST(IDANOMAL AS INT64) = 2 THEN 'Não'
-    WHEN SAFE_CAST(IDANOMAL AS INT64) = 9 THEN 'Não Informado'
-    ELSE 'Não Informado'
+  CASE SAFE_CAST(IDANOMAL AS INT64)
+    WHEN 1 THEN "Sim"
+    WHEN 2 THEN "Não"
+    WHEN 9 THEN "Ignorado"
+    ELSE "Não informado"
   END AS id_anomalia,
 
-  CAST(CODANOMAL AS STRING) AS cod_anomalia,
+  SAFE_CAST(IDADEMAE AS INT64) AS idade_mae,
+  SAFE_CAST(IDADEPAI AS INT64) AS idade_pai,
+  SAFE_CAST(PESO AS INT64) AS peso,
 
-  -- =========================================================
-  -- GESTAÇÃO / PARTO
-  -- =========================================================
+  CASE SAFE_CAST(RACACOR AS INT64)
+    WHEN 1 THEN "Branca"
+    WHEN 2 THEN "Preta"
+    WHEN 3 THEN "Amarela"
+    WHEN 4 THEN "Parda"
+    WHEN 5 THEN "Indígena"
+    WHEN 9 THEN "Ignorado"
+    ELSE "Não informado"
+  END AS raca_cor,
 
-  CAST(GESTACAO AS STRING) AS gestacao,
+  CAST(contador AS STRING) AS sequencial_nascimento,
 
   CASE
-    WHEN SAFE_CAST(GRAVIDEZ AS INT64) = 1 THEN 'Única'
-    WHEN SAFE_CAST(GRAVIDEZ AS INT64) = 2 THEN 'Dupla'
-    WHEN SAFE_CAST(GRAVIDEZ AS INT64) = 3 THEN 'Tríplice ou mais'
-    WHEN SAFE_CAST(GRAVIDEZ AS INT64) = 9 THEN 'Ignorado'
-    ELSE 'Não Informado'
-  END AS tipo_gravidez,
+    WHEN UPPER(TRIM(SEXO)) IN ("1", "M") THEN "Masculino"
+    WHEN UPPER(TRIM(SEXO)) IN ("2", "F") THEN "Feminino"
+    WHEN UPPER(TRIM(SEXO)) IN ("0", "9", "I") THEN "Ignorado"
+    ELSE "Não informado"
+  END AS sexo,
 
-  CASE
-    WHEN SAFE_CAST(PARTO AS INT64) = 1 THEN 'Normal'
-    WHEN SAFE_CAST(PARTO AS INT64) = 2 THEN 'Cesáreo'
-    WHEN SAFE_CAST(PARTO AS INT64) = 9 THEN 'Ignorado'
-    ELSE 'Não Informado'
-  END AS tipo_parto,
-
-  CAST(CONSULTAS AS STRING) AS consultas,
-
-  SAFE_CAST(SEMAGESTAC AS INT64) AS semanas_gestacao,
-  CAST(TPMETESTIM AS STRING) AS metodo_estimativa_gestacao,
-  CAST(CONSPRENAT AS STRING) AS consultas_prenatal,
-  CAST(MESPRENAT AS STRING) AS mes_inicio_prenatal,
-
-  CAST(TPAPRESENT AS STRING) AS tipo_apresentacao,
-  CAST(STTRABPART AS STRING) AS situacao_trabalho_parto,
-  CAST(STCESPARTO AS STRING) AS situacao_cesariana,
-
-  CAST(TPNASCASSI AS STRING) AS tipo_nascimento_assistido,
-  CAST(TPFUNCRESP AS STRING) AS tipo_funcao_responsavel,
-  CAST(TPDOCRESP AS STRING) AS tipo_documento_responsavel,
-
-  -- =========================================================
-  -- DATAS / CADASTRO / SISTEMA
-  -- =========================================================
-
-  CAST(DTCADASTRO AS STRING) AS data_cadastro,
-  CAST(DTRECEBIM AS STRING) AS data_recebimento,
-  CAST(DIFDATA AS STRING) AS diferenca_data,
-  CAST(OPORT_DN AS STRING) AS oportunidade_dn,
-  CAST(DTRECORIGA AS STRING) AS data_recebimento_origem,
-  CAST(DTDECLARAC AS STRING) AS data_declaracao,
-
-  -- =========================================================
-  -- OUTRAS INFORMAÇÕES SINASC
-  -- =========================================================
-
-  CAST(NATURALMAE AS STRING) AS naturalidade_mae,
-  CAST(DTULTMENST AS STRING) AS data_ultima_menstruacao,
-
-  CAST(NUMEROLOTE AS STRING) AS numero_lote,
-  CAST(VERSAOSIST AS STRING) AS versao_sistema,
-
-  CAST(ESCMAEAGR1 AS STRING) AS escolaridade_mae_agrupada,
-  CAST(STDNEPIDEM AS STRING) AS status_dn_epidemia,
-  CAST(STDNNOVA AS STRING) AS status_dn_nova,
-  CAST(TPROBSON AS STRING) AS tipo_robson,
-  CAST(PARIDADE AS STRING) AS paridade,
-  CAST(KOTELCHUCK AS STRING) AS kottelchuck,
-
-  -- =========================================================
-  -- ANO
-  -- =========================================================
-
+  CASE SAFE_CAST(GRAVIDEZ AS INT64)
+    WHEN 1 THEN "Única"
+    WHEN 2 THEN "Dupla"
+    WHEN 3 THEN "Tripla ou mais"
+    WHEN 9 THEN "Ignorado"
+    ELSE "Não informado"
+  END AS tipo_gravidez
 
 FROM ${ref("natalidade_alagoinhas_silver")}
