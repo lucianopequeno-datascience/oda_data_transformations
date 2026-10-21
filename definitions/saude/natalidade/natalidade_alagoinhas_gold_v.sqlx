@@ -6,10 +6,12 @@ config {
 }
 
 SELECT
-  SAFE_CAST(SUBSTR(TRIM(DTNASC), 1, 4) AS INT64) AS ano,
+
   CAST(CODESTAB AS STRING) AS codigo_estabelecimento,
-  CAST(DTNASC AS STRING) AS data_nascimento,
+  SAFE.PARSE_DATE('%d%m%Y', CAST(DTNASC AS STRING)) AS data_nascimento,
   CODANOMAL AS codigo_anomalia,
+
+--- tratamento escolaridade da mãe
 
   CASE SAFE_CAST(ESCMAE2010 AS INT64)
     WHEN 1 THEN "Nenhuma"
@@ -21,6 +23,8 @@ SELECT
     ELSE "Não informado"
   END AS desc_escolaridade_mae,
 
+--- tratamento situação conjulgal da mãe
+
   CASE SAFE_CAST(ESTCIVMAE AS INT64)
     WHEN 1 THEN "Solteira"
     WHEN 2 THEN "Casada"
@@ -30,6 +34,8 @@ SELECT
     WHEN 9 THEN "Ignorado"
     ELSE "Não informado"
   END AS estado_civil_mae,
+
+--- tratamento id da anomalia
 
   CASE SAFE_CAST(IDANOMAL AS INT64)
     WHEN 1 THEN "Sim"

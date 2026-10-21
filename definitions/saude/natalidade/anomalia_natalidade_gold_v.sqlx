@@ -1,18 +1,19 @@
 config {
   type: "view",
   schema: "dados_alagoinhas_gold",
-  description: "Dados de natalidade enriquecidos com o dicionário CID-10"
+  name: "anomalia_natalidade_gold_v",
+  description: "Dados de natalidade com anomalias congênitas enriquecidos com CID-10"
 }
 
 SELECT
   n.*,
-  c.subcategoria AS cid10_subcategoria,
-  c.descricao AS cid10_descricao
-
+  c.*
 FROM
   ${ref("natalidade_alagoinhas_gold_v")} AS n
-
 LEFT JOIN
   ${ref("cid10")} AS c
 ON
-  TRIM(n.codigo_anomalia) = TRIM(CAST(c.subcategoria AS STRING))
+  TRIM(CAST(n.codigo_anomalia AS STRING)) =
+  TRIM(CAST(c.subcategoria AS STRING))
+WHERE
+  n.codigo_anomalia IS NOT NULL
