@@ -10,6 +10,7 @@ SELECT
   CAST(CODESTAB AS STRING) AS codigo_estabelecimento,
   SAFE.PARSE_DATE('%d%m%Y', CAST(DTNASC AS STRING)) AS data_nascimento,
   CODANOMAL AS codigo_anomalia,
+  contador,
 
 --- tratamento escolaridade da mãe
 
@@ -73,6 +74,14 @@ SELECT
     WHEN 3 THEN "Tripla ou mais"
     WHEN 9 THEN "Ignorado"
     ELSE "Não informado"
-  END AS tipo_gravidez
+  END AS tipo_gravidez,
+
+
+ CASE
+  WHEN TRIM(PARTO) = '1' THEN 'Vaginal'
+  WHEN TRIM(PARTO) = '2' THEN 'Cesáreo'
+  WHEN TRIM(PARTO) = '9' THEN 'Ignorado'
+  ELSE 'Não informado'
+END AS tipo_parto,
 
 FROM ${ref("natalidade_alagoinhas_silver")}

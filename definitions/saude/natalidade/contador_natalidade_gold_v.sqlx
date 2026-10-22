@@ -1,0 +1,12 @@
+config {
+    type:"view",
+    schema:"dados_alagoinhas_gold",
+    name:"contador_natalidade_v",
+    description:"Descreve a data inicial e última data da série histórica"
+}
+
+SELECT 
+    MIN(data_nascimento) AS primeiro_registro,
+    MAX(data_nascimento) AS ultimo_registro,
+FROM
+${ref("natalidade_alagoinhas_gold_v")}
