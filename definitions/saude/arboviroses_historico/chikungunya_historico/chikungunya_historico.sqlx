@@ -1,0 +1,8 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_gold",
+    name:"chikungunya_historico_alagoinhas_gold",
+    description:"Dados tratados sobre chikungunya em Alagoinhas",
+}
+
+SELECT * FROM ${ref("chikungunya_historico_silver")}

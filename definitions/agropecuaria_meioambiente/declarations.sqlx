@@ -1,4 +1,5 @@
 config {
     type:"table",
     schema:"dados_alagoinhas_silver",
-    name:"pam_teste"}
+    name:"pam_teste",
+    description:"Referencial para base de dados sobre pesquisa agrícola municipal"}

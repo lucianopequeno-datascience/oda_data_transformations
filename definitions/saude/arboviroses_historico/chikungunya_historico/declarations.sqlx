@@ -1,0 +1,6 @@
+config {
+    type:"declaration",
+    schema:"dados_alagoinhas_silver",
+    name:"chikungunya_historico_silver",
+    description:"Referencial para dados históricos sobre chikungunya em Alagoinhas durante série vigente"
+}
