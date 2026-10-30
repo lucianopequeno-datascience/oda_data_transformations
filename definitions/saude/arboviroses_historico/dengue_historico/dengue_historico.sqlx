@@ -1,0 +1,8 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_gold",
+    name:"dengue_historico_gold",
+    description:"Dados preliminares tratados sobre dengue em Alagoinhas durante série histórica vigente"
+}
+
+SELECT * FROM ${ref("dengue_historico_silver")}

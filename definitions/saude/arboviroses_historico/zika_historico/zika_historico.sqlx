@@ -1,0 +1,8 @@
+config {
+    type:"table",
+    schema:"dados_alagoinhas_gold",
+    name:"zika_historico_gold",
+    description:"Dados preliminares tratados sobre xika em Alagoinhas durante série histórica vigente"
+}
+
+SELECT * FROM ${ref("zika_historico_silver")}
