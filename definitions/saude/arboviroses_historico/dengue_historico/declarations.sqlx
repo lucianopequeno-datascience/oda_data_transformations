@@ -1,0 +1,7 @@
+config {
+    type:"declaration",
+    schema:"dados_alagoinhas_silver",
+    name:"dengue_historico_silver",
+    description:"Referencial para tratamento de dados sobre dengue histórica"
+    
+}
